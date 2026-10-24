@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faFloppyDisk,
+  faStore,
+  faPrint,
+  faReceipt,
+} from '@fortawesome/free-solid-svg-icons';
 
 export const SettingsPage: React.FC = () => {
   const { settings, updateSettings } = useSettings();
@@ -42,7 +49,7 @@ export const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6 font-sans">
       <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl flex items-center justify-between shadow-sm">
         <div>
           <h2 className="text-base font-bold text-slate-900">Restaurant & Billing Preferences</h2>
@@ -55,8 +62,9 @@ export const SettingsPage: React.FC = () => {
       <form onSubmit={handleSave} className="bg-white border border-[#F3E5DC] rounded-3xl p-6 space-y-6 shadow-sm">
         {/* Section 1: Business Profile */}
         <div>
-          <h3 className="text-xs font-bold text-[#F67009] uppercase tracking-wider mb-4 border-b border-[#F3E5DC] pb-2">
-            1. Restaurant Profile
+          <h3 className="text-xs font-bold text-[#F67009] uppercase tracking-wider mb-4 border-b border-[#F3E5DC] pb-2 flex items-center gap-2">
+            <FontAwesomeIcon icon={faStore} />
+            <span>1. Restaurant Profile</span>
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -129,8 +137,9 @@ export const SettingsPage: React.FC = () => {
 
         {/* Section 2: Taxation, Currency & Thermal Printer */}
         <div>
-          <h3 className="text-xs font-bold text-[#F67009] uppercase tracking-wider mb-4 border-b border-[#F3E5DC] pb-2">
-            2. Taxation, Currency & Thermal Printer Settings
+          <h3 className="text-xs font-bold text-[#F67009] uppercase tracking-wider mb-4 border-b border-[#F3E5DC] pb-2 flex items-center gap-2">
+            <FontAwesomeIcon icon={faPrint} />
+            <span>2. Taxation, Currency & Thermal Printer Settings</span>
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -206,8 +215,9 @@ export const SettingsPage: React.FC = () => {
 
         {/* Section 3: Receipt Footer */}
         <div>
-          <h3 className="text-xs font-bold text-[#F67009] uppercase tracking-wider mb-4 border-b border-[#F3E5DC] pb-2">
-            3. Thermal Receipt Customization
+          <h3 className="text-xs font-bold text-[#F67009] uppercase tracking-wider mb-4 border-b border-[#F3E5DC] pb-2 flex items-center gap-2">
+            <FontAwesomeIcon icon={faReceipt} />
+            <span>3. Thermal Receipt Customization</span>
           </h3>
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
@@ -230,7 +240,8 @@ export const SettingsPage: React.FC = () => {
             disabled={saving}
             className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md flex items-center gap-2 transition-all disabled:opacity-50"
           >
-            {saving ? 'Saving Changes...' : 'Save Configuration'}
+            <FontAwesomeIcon icon={faFloppyDisk} />
+            <span>{saving ? 'Saving Changes...' : 'Save Configuration'}</span>
           </button>
         </div>
       </form>

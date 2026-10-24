@@ -1,6 +1,21 @@
 import React, { ReactNode } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faChartPie,
+  faCashRegister,
+  faUtensils,
+  faReceipt,
+  faBookOpen,
+  faChartLine,
+  faShieldHalved,
+  faUsers,
+  faGear,
+  faRightFromBracket,
+  faPrint,
+  IconDefinition,
+} from '@fortawesome/free-solid-svg-icons';
 
 interface MainLayoutProps {
   activePage: string;
@@ -11,7 +26,7 @@ interface MainLayoutProps {
 interface NavItem {
   id: string;
   name: string;
-  icon: string;
+  icon: IconDefinition;
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePage, children }) => {
@@ -19,15 +34,15 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
   const { settings } = useSettings();
 
   const navigation: NavItem[] = [
-    { id: 'dashboard', name: 'Dashboard', icon: '📊' },
-    { id: 'pos', name: 'Live POS Billing', icon: '⚡' },
-    { id: 'tables', name: 'Table Layout', icon: '🍽️' },
-    { id: 'orders', name: 'Order History', icon: '🧾' },
-    { id: 'menu', name: 'Menu & Categories', icon: '📖' },
-    { id: 'reports', name: 'Sales Reports', icon: '📈' },
-    { id: 'audit', name: 'Audit History', icon: '🛡️' },
-    ...(isAdmin ? [{ id: 'users', name: 'User Management', icon: '👥' }] : []),
-    { id: 'settings', name: 'Settings', icon: '⚙️' },
+    { id: 'dashboard', name: 'Dashboard', icon: faChartPie },
+    { id: 'pos', name: 'Live POS Billing', icon: faCashRegister },
+    { id: 'tables', name: 'Table Layout', icon: faUtensils },
+    { id: 'orders', name: 'Order History', icon: faReceipt },
+    { id: 'menu', name: 'Menu & Categories', icon: faBookOpen },
+    { id: 'reports', name: 'Sales Reports', icon: faChartLine },
+    { id: 'audit', name: 'Audit History', icon: faShieldHalved },
+    ...(isAdmin ? [{ id: 'users', name: 'User Management', icon: faUsers }] : []),
+    { id: 'settings', name: 'Settings', icon: faGear },
   ];
 
   return (
@@ -37,8 +52,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
         <div>
           {/* Brand header */}
           <div className="p-4 border-b border-[#F3E5DC] flex items-center gap-3 bg-[#FFF9F6]/60">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#F67009] to-[#F88D3A] text-white flex items-center justify-center text-xl shadow-md">
-              🍳
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#F67009] to-[#F88D3A] text-white flex items-center justify-center text-lg shadow-md">
+              <FontAwesomeIcon icon={faUtensils} />
             </div>
             <div className="overflow-hidden">
               <h1 className="font-bold text-slate-900 text-sm truncate leading-tight">
@@ -50,7 +65,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
 
           {/* Navigation Links */}
           <nav className="p-3 space-y-1">
-            {navigation.map(item => {
+            {navigation.map((item) => {
               const active = activePage === item.id;
               return (
                 <button
@@ -62,7 +77,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
                       : 'text-slate-600 hover:bg-[#FFF0E6] hover:text-[#F67009]'
                   }`}
                 >
-                  <span className="text-base">{item.icon}</span>
+                  <span className="w-5 text-center flex items-center justify-center">
+                    <FontAwesomeIcon icon={item.icon} className="text-sm" />
+                  </span>
                   <span>{item.name}</span>
                 </button>
               );
@@ -90,9 +107,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
             <button
               onClick={logout}
               title="Logout"
-              className="text-xs bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white px-2.5 py-1 rounded-lg font-medium transition-colors border border-rose-100"
+              className="text-xs bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white px-2.5 py-1.5 rounded-lg font-medium transition-colors border border-rose-100 flex items-center gap-1.5"
             >
-              Exit
+              <FontAwesomeIcon icon={faRightFromBracket} className="text-[11px]" />
+              <span>Exit</span>
             </button>
           </div>
         </div>
@@ -106,12 +124,13 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
             <span className="text-slate-400">System</span>
             <span>/</span>
             <span className="text-[#F67009] font-bold capitalize">
-              {navigation.find(n => n.id === activePage)?.name || activePage}
+              {navigation.find((n) => n.id === activePage)?.name || activePage}
             </span>
           </div>
 
           <div className="flex items-center gap-4 text-xs text-slate-600">
             <div className="hidden sm:flex items-center gap-2 bg-[#FFF9F6] border border-[#F3E5DC] px-2.5 py-1 rounded-lg">
+              <FontAwesomeIcon icon={faPrint} className="text-[#F67009]" />
               <span className="text-slate-400">Printer:</span>
               <span className="font-bold text-[#F67009] uppercase">{settings.receipt_paper_width || '80mm'}</span>
             </div>

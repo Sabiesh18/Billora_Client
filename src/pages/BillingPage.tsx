@@ -6,6 +6,21 @@ import PaymentModal from '../components/billing/PaymentModal';
 import ThermalReceiptModal from '../components/billing/ThermalReceiptModal';
 import KOTModal from '../components/billing/KOTModal';
 import { Category, MenuItem, Table, Bill, CartItem } from '../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faMagnifyingGlass,
+  faXmark,
+  faUtensils,
+  faBagShopping,
+  faMotorcycle,
+  faMinus,
+  faPlus,
+  faTrashCan,
+  faCartShopping,
+  faKitchenSet,
+  faFloppyDisk,
+  faMoneyBillWave,
+} from '@fortawesome/free-solid-svg-icons';
 
 export const BillingPage: React.FC = () => {
   const { settings } = useSettings();
@@ -262,26 +277,28 @@ export const BillingPage: React.FC = () => {
   const selectedTableObj = tables.find((t) => t.tableId === selectedTableId);
 
   return (
-    <div className="h-[calc(100vh-5.5rem)] flex flex-col lg:flex-row gap-4 overflow-hidden">
+    <div className="h-[calc(100vh-5.5rem)] flex flex-col lg:flex-row gap-4 overflow-hidden font-sans">
       {/* LEFT: Menu Catalog & Categories */}
       <div className="flex-1 flex flex-col bg-white border border-[#F3E5DC] rounded-2xl overflow-hidden shadow-sm">
         {/* Search & Order Mode Bar */}
         <div className="p-3 border-b border-[#F3E5DC] bg-[#FFF9F6] flex flex-col sm:flex-row gap-3 items-center justify-between">
           <div className="relative w-full sm:w-72">
-            <span className="absolute left-3 top-2.5 text-slate-400 text-sm">🔍</span>
+            <span className="absolute left-3 top-2.5 text-slate-400 text-xs">
+              <FontAwesomeIcon icon={faMagnifyingGlass} />
+            </span>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search dishes or item code..."
-              className="w-full bg-white border border-[#E5D7CE] rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F67009] focus:ring-1 focus:ring-[#F67009]"
+              className="w-full bg-white border border-[#E5D7CE] rounded-xl pl-9 pr-8 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F67009] focus:ring-1 focus:ring-[#F67009]"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
                 className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-700 text-xs"
               >
-                &times;
+                <FontAwesomeIcon icon={faXmark} />
               </button>
             )}
           </div>
@@ -404,21 +421,22 @@ export const BillingPage: React.FC = () => {
           {/* Order Type Tabs */}
           <div className="grid grid-cols-3 gap-1 p-1 bg-white rounded-xl border border-[#F3E5DC] text-xs font-semibold">
             {[
-              { id: 'DINE_IN', label: '🍽️ Dine-In' },
-              { id: 'TAKEAWAY', label: '🛍️ Takeaway' },
-              { id: 'DELIVERY', label: '🛵 Delivery' },
+              { id: 'DINE_IN', label: 'Dine-In', icon: faUtensils },
+              { id: 'TAKEAWAY', label: 'Takeaway', icon: faBagShopping },
+              { id: 'DELIVERY', label: 'Delivery', icon: faMotorcycle },
             ].map((ot) => (
               <button
                 key={ot.id}
                 type="button"
                 onClick={() => setOrderType(ot.id)}
-                className={`py-1.5 rounded-lg transition-all ${
+                className={`py-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
                   orderType === ot.id
                     ? 'bg-gradient-to-r from-[#F67009] to-[#F88D3A] text-white font-bold shadow-xs'
                     : 'text-slate-600 hover:text-[#F67009]'
                 }`}
               >
-                {ot.label}
+                <FontAwesomeIcon icon={ot.icon} className="text-[11px]" />
+                <span>{ot.label}</span>
               </button>
             ))}
           </div>
@@ -491,7 +509,7 @@ export const BillingPage: React.FC = () => {
                     onClick={() => updateQuantity(item.itemId, -1)}
                     className="w-5 h-5 rounded bg-white hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold flex items-center justify-center border border-[#E5D7CE]"
                   >
-                    -
+                    <FontAwesomeIcon icon={faMinus} className="text-[9px]" />
                   </button>
                   <span className="w-5 text-center text-xs font-black text-slate-900">
                     {item.quantity}
@@ -500,7 +518,7 @@ export const BillingPage: React.FC = () => {
                     onClick={() => updateQuantity(item.itemId, 1)}
                     className="w-5 h-5 rounded bg-white hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold flex items-center justify-center border border-[#E5D7CE]"
                   >
-                    +
+                    <FontAwesomeIcon icon={faPlus} className="text-[9px]" />
                   </button>
                 </div>
 
@@ -511,16 +529,19 @@ export const BillingPage: React.FC = () => {
                   </p>
                   <button
                     onClick={() => removeFromCart(item.itemId)}
-                    className="text-[10px] text-rose-500 hover:text-rose-700 font-semibold"
+                    className="text-[10px] text-rose-500 hover:text-rose-700 font-semibold flex items-center justify-end gap-1 w-full mt-0.5"
                   >
-                    Remove
+                    <FontAwesomeIcon icon={faTrashCan} />
+                    <span>Delete</span>
                   </button>
                 </div>
               </div>
             ))
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-slate-400 text-xs py-12">
-              <span className="text-3xl mb-2 opacity-60">🛒</span>
+              <span className="w-12 h-12 rounded-2xl bg-[#FFF0E6] text-[#F67009] flex items-center justify-center text-xl mb-2">
+                <FontAwesomeIcon icon={faCartShopping} />
+              </span>
               <p className="font-bold text-slate-600">Cart is currently empty</p>
               <p className="text-[10px] text-slate-400">Select dishes from the menu catalog to begin</p>
             </div>
@@ -595,27 +616,30 @@ export const BillingPage: React.FC = () => {
               type="button"
               disabled={cart.length === 0}
               onClick={() => setKotModalOpen(true)}
-              className="py-2.5 px-2 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-xl text-xs font-bold border border-[#FED7AA] disabled:opacity-50 transition-colors shadow-xs"
+              className="py-2.5 px-2 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-xl text-xs font-bold border border-[#FED7AA] disabled:opacity-50 transition-colors shadow-xs flex items-center justify-center gap-1.5"
             >
-              🍳 Print KOT
+              <FontAwesomeIcon icon={faKitchenSet} />
+              <span>Print KOT</span>
             </button>
 
             <button
               type="button"
               disabled={cart.length === 0 || processing}
               onClick={handleCreateBill}
-              className="py-2.5 px-2 bg-white border-2 border-[#F67009] text-[#F67009] hover:bg-[#FFF0E6] rounded-xl text-xs font-bold disabled:opacity-50 transition-colors shadow-xs"
+              className="py-2.5 px-2 bg-white border-2 border-[#F67009] text-[#F67009] hover:bg-[#FFF0E6] rounded-xl text-xs font-bold disabled:opacity-50 transition-colors shadow-xs flex items-center justify-center gap-1.5"
             >
-              💾 Hold Bill
+              <FontAwesomeIcon icon={faFloppyDisk} />
+              <span>Hold Bill</span>
             </button>
 
             <button
               type="button"
               disabled={cart.length === 0 || processing}
               onClick={handleProceedToPayment}
-              className="py-2.5 px-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white rounded-xl text-xs font-black shadow-md disabled:opacity-50 transition-all"
+              className="py-2.5 px-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white rounded-xl text-xs font-black shadow-md disabled:opacity-50 transition-all flex items-center justify-center gap-1.5"
             >
-              💰 Settle Bill
+              <FontAwesomeIcon icon={faMoneyBillWave} />
+              <span>Settle Bill</span>
             </button>
           </div>
         </div>

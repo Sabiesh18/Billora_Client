@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useSettings } from '../context/SettingsContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faUtensils,
+  faRightToBracket,
+  faCircleCheck,
+  faUser,
+  faLock,
+} from '@fortawesome/free-solid-svg-icons';
 
 export const LoginPage: React.FC = () => {
   const { login, loading } = useAuth();
@@ -37,12 +45,12 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF9F6] flex flex-col justify-center items-center p-4 select-none">
+    <div className="min-h-screen bg-[#FFF9F6] flex flex-col justify-center items-center p-4 select-none font-sans">
       <div className="w-full max-w-md bg-white border border-[#F3E5DC] rounded-3xl shadow-xl p-8">
         {/* Logo and Restaurant Title */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-tr from-[#F67009] to-[#F88D3A] text-white rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-md">
-            🍽️
+          <div className="w-16 h-16 bg-gradient-to-tr from-[#F67009] to-[#F88D3A] text-white rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3 shadow-md">
+            <FontAwesomeIcon icon={faUtensils} />
           </div>
           <h1 className="text-xl font-bold text-slate-900 tracking-tight">
             {settings.restaurant_name || 'Billora POS'}
@@ -55,29 +63,31 @@ export const LoginPage: React.FC = () => {
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Username
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <FontAwesomeIcon icon={faUser} className="text-[#F67009] text-[11px]" />
+              <span>Username</span>
             </label>
             <input
               type="text"
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full bg-white border border-[#E5D7CE] rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F67009] focus:ring-1 focus:ring-[#F67009] transition-colors"
+              className="w-full bg-[#FFF9F6] border border-[#F3E5DC] rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F67009] focus:ring-1 focus:ring-[#F67009] transition-colors"
               placeholder="Enter username"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Password
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <FontAwesomeIcon icon={faLock} className="text-[#F67009] text-[11px]" />
+              <span>Password</span>
             </label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white border border-[#E5D7CE] rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F67009] focus:ring-1 focus:ring-[#F67009] transition-colors"
+              className="w-full bg-[#FFF9F6] border border-[#F3E5DC] rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F67009] focus:ring-1 focus:ring-[#F67009] transition-colors"
               placeholder="Enter password"
             />
           </div>
@@ -93,7 +103,10 @@ export const LoginPage: React.FC = () => {
                 <span>Authenticating...</span>
               </>
             ) : (
-              <span>Sign In to Terminal</span>
+              <>
+                <FontAwesomeIcon icon={faRightToBracket} />
+                <span>Sign In to Terminal</span>
+              </>
             )}
           </button>
         </form>
@@ -130,7 +143,7 @@ export const LoginPage: React.FC = () => {
 
         {/* Offline Badge */}
         <div className="mt-6 flex items-center justify-center gap-1.5 text-[11px] text-emerald-600 font-semibold">
-          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <FontAwesomeIcon icon={faCircleCheck} className="text-emerald-500" />
           <span>100% Offline Local Mode • PostgreSQL Connected</span>
         </div>
       </div>

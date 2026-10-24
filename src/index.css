@@ -1,3 +1,9 @@
+@import '@fontsource/roboto/300.css';
+@import '@fontsource/roboto/400.css';
+@import '@fontsource/roboto/500.css';
+@import '@fontsource/roboto/700.css';
+@import '@fontsource/roboto/900.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,7 +12,7 @@
   body {
     background-color: #FFF9F6;
     color: #1e293b;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
 }
 
@@ -48,23 +54,27 @@
     background: #ffffff !important;
     color: #000000 !important;
     font-family: 'Courier New', Courier, monospace;
-    line-height: 1.25;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
   }
 
-  /* 80mm Standard POS Printer format */
+  /* Target exact width for 80mm thermal receipt rolls */
   #thermal-receipt-print-area.format-80mm {
-    width: 80mm;
-    font-size: 11px;
+    width: 72mm !important;
+    max-width: 72mm !important;
   }
 
-  /* 58mm Compact POS Printer format */
+  /* Target exact width for 58mm compact thermal receipt rolls */
   #thermal-receipt-print-area.format-58mm {
-    width: 58mm;
-    font-size: 9.5px;
-    padding: 2mm 1mm;
+    width: 48mm !important;
+    max-width: 48mm !important;
+    font-size: 8.5pt !important;
   }
 
   @page {
     margin: 0;
+    size: auto;
   }
 }

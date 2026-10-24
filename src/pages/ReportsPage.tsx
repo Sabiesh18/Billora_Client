@@ -3,6 +3,15 @@ import { reportApi } from '../api/client';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
 import { SalesReport } from '../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faPrint,
+  faFilter,
+  faCoins,
+  faReceipt,
+  faPercent,
+  faTags,
+} from '@fortawesome/free-solid-svg-icons';
 
 export const ReportsPage: React.FC = () => {
   const { settings } = useSettings();
@@ -52,7 +61,7 @@ export const ReportsPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto font-sans">
       {/* Filter Header */}
       <div className="bg-white border border-[#F3E5DC] p-4 rounded-2xl flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between shadow-sm">
         <div>
@@ -112,16 +121,17 @@ export const ReportsPage: React.FC = () => {
 
           <button
             onClick={fetchReport}
-            className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white text-xs font-bold px-4 py-1.5 rounded-xl shadow-md transition-all"
+            className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white text-xs font-bold px-4 py-1.5 rounded-xl shadow-md transition-all flex items-center gap-1.5"
           >
-            Filter
+            <FontAwesomeIcon icon={faFilter} />
+            <span>Filter</span>
           </button>
 
           <button
             onClick={handlePrint}
-            className="bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] text-xs font-bold px-3 py-1.5 rounded-xl border border-[#FED7AA] flex items-center gap-1 transition-colors"
+            className="bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] text-xs font-bold px-3 py-1.5 rounded-xl border border-[#FED7AA] flex items-center gap-1.5 transition-colors"
           >
-            <span>🖨️</span>
+            <FontAwesomeIcon icon={faPrint} />
             <span>Print Report</span>
           </button>
         </div>
@@ -130,7 +140,10 @@ export const ReportsPage: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Net Sales Revenue</span>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Net Sales Revenue</span>
+            <FontAwesomeIcon icon={faCoins} className="text-[#F67009]" />
+          </div>
           <h3 className="text-2xl font-black text-[#F67009] mt-2">
             {settings.currency_symbol || '₹'} {Number(reportData?.totalSales || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </h3>
@@ -138,7 +151,10 @@ export const ReportsPage: React.FC = () => {
         </div>
 
         <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Settled Invoices</span>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Settled Invoices</span>
+            <FontAwesomeIcon icon={faReceipt} className="text-blue-500" />
+          </div>
           <h3 className="text-2xl font-black text-slate-900 mt-2">
             {reportData?.totalOrders || 0}
           </h3>
@@ -146,7 +162,10 @@ export const ReportsPage: React.FC = () => {
         </div>
 
         <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Tax (GST)</span>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Tax (GST)</span>
+            <FontAwesomeIcon icon={faPercent} className="text-emerald-500" />
+          </div>
           <h3 className="text-2xl font-black text-slate-900 mt-2">
             {settings.currency_symbol || '₹'} {Number(reportData?.totalTax || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </h3>
@@ -154,7 +173,10 @@ export const ReportsPage: React.FC = () => {
         </div>
 
         <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Discounts Given</span>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Discounts Given</span>
+            <FontAwesomeIcon icon={faTags} className="text-rose-500" />
+          </div>
           <h3 className="text-2xl font-black text-rose-600 mt-2">
             {settings.currency_symbol || '₹'} {Number(reportData?.totalDiscount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </h3>

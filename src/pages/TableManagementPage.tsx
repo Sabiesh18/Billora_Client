@@ -3,6 +3,13 @@ import { tableApi } from '../api/client';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
 import { Table } from '../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faPlus,
+  faArrowsRotate,
+  faChair,
+  faCircleCheck,
+} from '@fortawesome/free-solid-svg-icons';
 
 interface TableManagementPageProps {
   setActivePage?: (page: string) => void;
@@ -83,7 +90,7 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
   };
 
   return (
-    <div className="space-y-5 max-w-7xl mx-auto">
+    <div className="space-y-5 max-w-7xl mx-auto font-sans">
       {/* Top Header & Area Pills */}
       <div className="bg-white border border-[#F3E5DC] p-4 rounded-2xl flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shadow-sm">
         <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
@@ -107,14 +114,15 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
             onClick={() => setNewTableModal(true)}
             className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md flex items-center gap-1.5 transition-all"
           >
-            <span>+</span>
+            <FontAwesomeIcon icon={faPlus} />
             <span>Add Table</span>
           </button>
           <button
             onClick={fetchTables}
-            className="bg-[#FFF9F6] hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold px-3 py-2 rounded-xl border border-[#F3E5DC] transition-colors"
+            className="bg-[#FFF9F6] hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold px-3 py-2 rounded-xl border border-[#F3E5DC] transition-colors flex items-center gap-1.5"
           >
-            Refresh 🔄
+            <FontAwesomeIcon icon={faArrowsRotate} className={loading ? 'animate-spin text-[#F67009]' : ''} />
+            <span>Refresh</span>
           </button>
         </div>
       </div>
@@ -122,7 +130,10 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
       {/* Tables Grid */}
       {loading ? (
         <div className="p-12 text-center text-slate-400 text-sm">
-          <span className="inline-block animate-spin mr-2">⏳</span> Loading dining tables...
+          <span className="inline-block animate-spin mr-2">
+            <FontAwesomeIcon icon={faArrowsRotate} />
+          </span>{' '}
+          Loading dining tables...
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4">
@@ -153,10 +164,11 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
                     </span>
                   </div>
 
-                  <p className="text-[11px] text-slate-500">
-                    Capacity: <strong className="text-slate-800">{t.seatingCapacity} Seats</strong>
+                  <p className="text-[11px] text-slate-500 flex items-center gap-1">
+                    <FontAwesomeIcon icon={faChair} className="text-slate-400 text-[10px]" />
+                    <span>Capacity: <strong className="text-slate-800">{t.seatingCapacity} Seats</strong></span>
                   </p>
-                  <p className="text-[10px] text-slate-400 truncate">{t.locationArea}</p>
+                  <p className="text-[10px] text-slate-400 truncate mt-0.5">{t.locationArea}</p>
 
                   {isOccupied && (
                     <div className="mt-3 p-2 bg-white rounded-xl border border-[#F3E5DC] shadow-xs">
@@ -188,8 +200,9 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
       {newTableModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white border border-[#F3E5DC] rounded-3xl w-full max-w-sm p-6 shadow-2xl">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
-              Add New Dining Table
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <FontAwesomeIcon icon={faChair} className="text-[#F67009]" />
+              <span>Add New Dining Table</span>
             </h3>
 
             <form onSubmit={handleCreateTable} className="space-y-4">
@@ -247,9 +260,10 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white rounded-xl text-xs font-bold transition-all shadow-md"
+                  className="px-4 py-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5"
                 >
-                  {submitting ? 'Creating...' : 'Save Table'}
+                  <FontAwesomeIcon icon={faCircleCheck} />
+                  <span>{submitting ? 'Creating...' : 'Save Table'}</span>
                 </button>
               </div>
             </form>

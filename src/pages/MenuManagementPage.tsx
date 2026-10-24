@@ -3,6 +3,14 @@ import { categoryApi, menuApi } from '../api/client';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
 import { Category, MenuItem, FoodType } from '../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faPlus,
+  faPenToSquare,
+  faUtensils,
+  faLayerGroup,
+  faCheck,
+} from '@fortawesome/free-solid-svg-icons';
 
 export const MenuManagementPage: React.FC = () => {
   const { settings } = useSettings();
@@ -155,7 +163,7 @@ export const MenuManagementPage: React.FC = () => {
   );
 
   return (
-    <div className="space-y-5 max-w-7xl mx-auto">
+    <div className="space-y-5 max-w-7xl mx-auto font-sans">
       {/* Top Action Bar */}
       <div className="bg-white border border-[#F3E5DC] p-4 rounded-2xl flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shadow-sm">
         <div>
@@ -166,18 +174,20 @@ export const MenuManagementPage: React.FC = () => {
         <div className="flex gap-2">
           <button
             onClick={() => setCatModalOpen(true)}
-            className="bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] text-xs font-bold px-3.5 py-2 rounded-xl border border-[#FED7AA] transition-colors"
+            className="bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] text-xs font-bold px-3.5 py-2 rounded-xl border border-[#FED7AA] transition-colors flex items-center gap-1.5"
           >
-            + Add Category
+            <FontAwesomeIcon icon={faLayerGroup} />
+            <span>Add Category</span>
           </button>
           <button
             onClick={() => {
               resetItemForm();
               setItemModalOpen(true);
             }}
-            className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition-all"
+            className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition-all flex items-center gap-1.5"
           >
-            + Add Menu Item
+            <FontAwesomeIcon icon={faPlus} />
+            <span>Add Menu Item</span>
           </button>
         </div>
       </div>
@@ -277,9 +287,10 @@ export const MenuManagementPage: React.FC = () => {
                     <td className="p-3.5 text-right">
                       <button
                         onClick={() => openEditItem(item)}
-                        className="px-2.5 py-1 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-lg border border-[#FED7AA] font-bold transition-colors"
+                        className="px-2.5 py-1 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-lg border border-[#FED7AA] font-bold transition-colors flex items-center gap-1 ml-auto"
                       >
-                        Edit
+                        <FontAwesomeIcon icon={faPenToSquare} className="text-[10px]" />
+                        <span>Edit</span>
                       </button>
                     </td>
                   </tr>
@@ -300,8 +311,9 @@ export const MenuManagementPage: React.FC = () => {
       {itemModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white border border-[#F3E5DC] rounded-3xl w-full max-w-md p-6 shadow-2xl">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
-              {editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <FontAwesomeIcon icon={faUtensils} className="text-[#F67009]" />
+              <span>{editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}</span>
             </h3>
 
             <form onSubmit={handleSaveItem} className="space-y-3.5">
@@ -421,9 +433,10 @@ export const MenuManagementPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white rounded-xl text-xs font-bold transition-all shadow-md"
+                  className="px-4 py-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5"
                 >
-                  {submitting ? 'Saving...' : 'Save Item'}
+                  <FontAwesomeIcon icon={faCheck} />
+                  <span>{submitting ? 'Saving...' : 'Save Item'}</span>
                 </button>
               </div>
             </form>
@@ -435,8 +448,9 @@ export const MenuManagementPage: React.FC = () => {
       {catModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white border border-[#F3E5DC] rounded-3xl w-full max-w-sm p-6 shadow-2xl">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
-              Add Food Category
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <FontAwesomeIcon icon={faLayerGroup} className="text-[#F67009]" />
+              <span>Add Food Category</span>
             </h3>
             <form onSubmit={handleCreateCategory} className="space-y-3.5">
               <div>
@@ -476,9 +490,10 @@ export const MenuManagementPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white rounded-xl text-xs font-bold transition-all shadow-md"
+                  className="px-4 py-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5"
                 >
-                  Save Category
+                  <FontAwesomeIcon icon={faCheck} />
+                  <span>Save Category</span>
                 </button>
               </div>
             </form>

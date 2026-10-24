@@ -2,6 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { reportApi } from '../api/client';
 import { useSettings } from '../context/SettingsContext';
 import { DashboardMetrics } from '../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faBolt,
+  faUtensils,
+  faArrowsRotate,
+  faCoins,
+  faReceipt,
+  faHourglassHalf,
+  faChair,
+  faFire,
+  faCreditCard,
+  faMoneyBillWave,
+  faMobileScreenButton,
+  faTags,
+} from '@fortawesome/free-solid-svg-icons';
 
 interface DashboardPageProps {
   setActivePage: (page: string) => void;
@@ -32,7 +47,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ setActivePage }) =
   }, []);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto font-sans">
       {/* Top Banner & Quick Actions */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-[#F3E5DC] p-5 rounded-2xl shadow-sm">
         <div>
@@ -44,21 +59,22 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ setActivePage }) =
             onClick={() => setActivePage('pos')}
             className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center gap-2"
           >
-            <span>⚡</span>
+            <FontAwesomeIcon icon={faBolt} />
             <span>New POS Bill</span>
           </button>
           <button
             onClick={() => setActivePage('tables')}
-            className="bg-[#FFF9F6] hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold px-3.5 py-2.5 rounded-xl border border-[#F3E5DC] transition-colors"
+            className="bg-[#FFF9F6] hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold px-3.5 py-2.5 rounded-xl border border-[#F3E5DC] transition-colors flex items-center gap-1.5"
           >
-            Table Layout
+            <FontAwesomeIcon icon={faUtensils} className="text-[#F67009]" />
+            <span>Table Layout</span>
           </button>
           <button
             onClick={fetchMetrics}
             title="Refresh Metrics"
-            className="bg-[#FFF9F6] hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold px-3 py-2.5 rounded-xl border border-[#F3E5DC] transition-colors"
+            className="bg-[#FFF9F6] hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold px-3 py-2.5 rounded-xl border border-[#F3E5DC] transition-colors flex items-center justify-center"
           >
-            {loading ? '⏳' : '🔄'}
+            <FontAwesomeIcon icon={faArrowsRotate} className={loading ? 'animate-spin text-[#F67009]' : ''} />
           </button>
         </div>
       </div>
@@ -69,7 +85,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ setActivePage }) =
         <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl relative overflow-hidden shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase text-slate-500 tracking-wider">Today's Revenue</span>
-            <span className="text-xl p-2 bg-[#FFF0E6] text-[#F67009] rounded-xl border border-[#FED7AA]">💰</span>
+            <span className="w-10 h-10 flex items-center justify-center bg-[#FFF0E6] text-[#F67009] rounded-xl border border-[#FED7AA]">
+              <FontAwesomeIcon icon={faCoins} className="text-base" />
+            </span>
           </div>
           <div className="mt-3">
             <h3 className="text-2xl font-black text-slate-900">
@@ -85,7 +103,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ setActivePage }) =
         <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl relative overflow-hidden shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase text-slate-500 tracking-wider">Settled Orders</span>
-            <span className="text-xl p-2 bg-blue-50 text-blue-600 rounded-xl border border-blue-100">🧾</span>
+            <span className="w-10 h-10 flex items-center justify-center bg-blue-50 text-blue-600 rounded-xl border border-blue-100">
+              <FontAwesomeIcon icon={faReceipt} className="text-base" />
+            </span>
           </div>
           <div className="mt-3">
             <h3 className="text-2xl font-black text-slate-900">
@@ -99,7 +119,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ setActivePage }) =
         <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl relative overflow-hidden shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase text-slate-500 tracking-wider">Active Bills</span>
-            <span className="text-xl p-2 bg-[#FFF0E6] text-[#F88D3A] rounded-xl border border-[#FED7AA]">⏳</span>
+            <span className="w-10 h-10 flex items-center justify-center bg-[#FFF0E6] text-[#F88D3A] rounded-xl border border-[#FED7AA]">
+              <FontAwesomeIcon icon={faHourglassHalf} className="text-base" />
+            </span>
           </div>
           <div className="mt-3">
             <h3 className="text-2xl font-black text-[#F67009]">
@@ -113,7 +135,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ setActivePage }) =
         <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl relative overflow-hidden shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase text-slate-500 tracking-wider">Occupancy Rate</span>
-            <span className="text-xl p-2 bg-purple-50 text-purple-600 rounded-xl border border-purple-100">🍽️</span>
+            <span className="w-10 h-10 flex items-center justify-center bg-purple-50 text-purple-600 rounded-xl border border-purple-100">
+              <FontAwesomeIcon icon={faChair} className="text-base" />
+            </span>
           </div>
           <div className="mt-3">
             <h3 className="text-2xl font-black text-slate-900">
@@ -132,7 +156,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ setActivePage }) =
         <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-              <span>🔥</span> Top Selling Dishes Today
+              <FontAwesomeIcon icon={faFire} className="text-[#F67009]" />
+              <span>Top Selling Dishes Today</span>
             </h3>
             <span className="text-xs text-slate-400 font-mono">By volume</span>
           </div>
@@ -167,29 +192,39 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ setActivePage }) =
         <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-              <span>💳</span> Payment Mode Split
+              <FontAwesomeIcon icon={faCreditCard} className="text-[#F67009]" />
+              <span>Payment Mode Split</span>
             </h3>
             <span className="text-xs text-slate-400 font-mono">Today's Collections</span>
           </div>
 
           {metrics?.paymentBreakdown && metrics.paymentBreakdown.length > 0 ? (
             <div className="space-y-3">
-              {metrics.paymentBreakdown.map((pm, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-[#FFF9F6] border border-[#F3E5DC] flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-lg">
-                      {pm.paymentMode === 'CASH' ? '💵' : pm.paymentMode === 'UPI' ? '📱' : pm.paymentMode === 'CARD' ? '💳' : '🏷️'}
-                    </span>
-                    <div>
-                      <p className="text-xs font-bold text-slate-800">{pm.paymentMode}</p>
-                      <p className="text-[11px] text-slate-500">{pm.count} transactions</p>
+              {metrics.paymentBreakdown.map((pm, idx) => {
+                const getIcon = () => {
+                  if (pm.paymentMode === 'CASH') return faMoneyBillWave;
+                  if (pm.paymentMode === 'UPI') return faMobileScreenButton;
+                  if (pm.paymentMode === 'CARD') return faCreditCard;
+                  return faTags;
+                };
+
+                return (
+                  <div key={idx} className="p-3 rounded-xl bg-[#FFF9F6] border border-[#F3E5DC] flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-8 h-8 rounded-lg bg-[#FFF0E6] text-[#F67009] flex items-center justify-center text-sm">
+                        <FontAwesomeIcon icon={getIcon()} />
+                      </span>
+                      <div>
+                        <p className="text-xs font-bold text-slate-800">{pm.paymentMode}</p>
+                        <p className="text-[11px] text-slate-500">{pm.count} transactions</p>
+                      </div>
                     </div>
+                    <span className="text-sm font-bold text-slate-900">
+                      {settings.currency_symbol || '₹'} {Number(pm.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    </span>
                   </div>
-                  <span className="text-sm font-bold text-slate-900">
-                    {settings.currency_symbol || '₹'} {Number(pm.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-8 text-slate-400 text-xs">

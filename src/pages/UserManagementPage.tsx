@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { userApi } from '../api/client';
 import { useToast } from '../context/ToastContext';
 import { User } from '../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faUserPlus,
+  faUser,
+  faCheck,
+} from '@fortawesome/free-solid-svg-icons';
 
 export const UserManagementPage: React.FC = () => {
   const { showToast } = useToast();
@@ -69,7 +75,7 @@ export const UserManagementPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-5 max-w-7xl mx-auto">
+    <div className="space-y-5 max-w-7xl mx-auto font-sans">
       {/* Top Header Card */}
       <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl shadow-sm flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
@@ -81,7 +87,7 @@ export const UserManagementPage: React.FC = () => {
           onClick={() => setModalOpen(true)}
           className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:brightness-105 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
         >
-          <span>+</span>
+          <FontAwesomeIcon icon={faUserPlus} />
           <span>Add Staff Account</span>
         </button>
       </div>
@@ -156,8 +162,9 @@ export const UserManagementPage: React.FC = () => {
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white border border-[#F3E5DC] rounded-2xl w-full max-w-md p-6 shadow-2xl">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
-              Add New Staff User
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <FontAwesomeIcon icon={faUser} className="text-[#F67009]" />
+              <span>Add New Staff User</span>
             </h3>
 
             <form onSubmit={handleCreateUser} className="space-y-3.5">
@@ -260,9 +267,10 @@ export const UserManagementPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:brightness-105 text-white rounded-lg text-xs font-bold transition-all shadow-sm"
+                  className="px-4 py-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:brightness-105 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
                 >
-                  {submitting ? 'Creating...' : 'Create Account'}
+                  <FontAwesomeIcon icon={faCheck} />
+                  <span>{submitting ? 'Creating...' : 'Create Account'}</span>
                 </button>
               </div>
             </form>

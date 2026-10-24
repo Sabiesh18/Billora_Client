@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { useSettings } from '../../context/SettingsContext';
 import { Bill } from '../../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faReceipt,
+  faPrint,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 
 interface ThermalReceiptModalProps {
   bill: Bill | null;
@@ -23,13 +29,14 @@ export const ThermalReceiptModal: React.FC<ThermalReceiptModalProps> = ({ bill, 
   const widthContainerClass = is58mm ? 'max-w-[240px]' : 'max-w-[340px]';
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 font-sans">
       <div className="bg-white border border-[#F3E5DC] rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
         {/* Header toolbar */}
         <div className="px-5 py-3 border-b border-[#F3E5DC] flex items-center justify-between bg-white">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-              🖨️ POS Receipt
+            <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+              <FontAwesomeIcon icon={faReceipt} className="text-[#F67009]" />
+              <span>POS Receipt</span>
             </span>
             {/* Paper Size Selector Toggle */}
             <div className="flex items-center bg-[#FFF9F6] p-0.5 rounded-lg border border-[#F3E5DC]">
@@ -63,14 +70,14 @@ export const ThermalReceiptModal: React.FC<ThermalReceiptModalProps> = ({ bill, 
               onClick={handlePrint}
               className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:brightness-105 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition-all active:scale-95"
             >
-              <span>🖨️</span>
+              <FontAwesomeIcon icon={faPrint} />
               <span>Print Slip ({paperWidth})</span>
             </button>
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-slate-700 text-xl px-2 leading-none font-bold"
+              className="text-slate-400 hover:text-slate-700 text-lg px-2 leading-none font-bold"
             >
-              &times;
+              <FontAwesomeIcon icon={faXmark} />
             </button>
           </div>
         </div>
@@ -204,9 +211,10 @@ export const ThermalReceiptModal: React.FC<ThermalReceiptModalProps> = ({ bill, 
             </button>
             <button
               onClick={handlePrint}
-              className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:brightness-105 text-white rounded-lg transition-all shadow-sm"
+              className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:brightness-105 text-white rounded-lg transition-all shadow-sm flex items-center gap-1.5"
             >
-              Print Receipt
+              <FontAwesomeIcon icon={faPrint} />
+              <span>Print Receipt</span>
             </button>
           </div>
         </div>

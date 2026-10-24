@@ -1,6 +1,15 @@
 import React, { useState, FormEvent } from 'react';
 import { useSettings } from '../../context/SettingsContext';
 import { Bill, BillSettlePayload } from '../../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faMoneyBillWave,
+  faMobileScreenButton,
+  faCreditCard,
+  faArrowsRotate,
+  faXmark,
+  faCheck,
+} from '@fortawesome/free-solid-svg-icons';
 
 interface PaymentModalProps {
   bill: Bill;
@@ -33,7 +42,7 @@ export default function PaymentModal({ bill, onSettle, onClose, loading }: Payme
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 font-sans">
       <div className="bg-white border border-[#F3E5DC] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="px-6 py-4 border-b border-[#F3E5DC] flex items-center justify-between bg-white">
@@ -41,8 +50,8 @@ export default function PaymentModal({ bill, onSettle, onClose, loading }: Payme
             <h3 className="text-base font-bold text-slate-900">Bill Settlement & Payment</h3>
             <p className="text-xs text-slate-500">Bill #{bill.billNumber || 'NEW'}</p>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-700 text-xl font-bold">
-            &times;
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-700 text-lg">
+            <FontAwesomeIcon icon={faXmark} />
           </button>
         </div>
 
@@ -62,10 +71,10 @@ export default function PaymentModal({ bill, onSettle, onClose, loading }: Payme
             </label>
             <div className="grid grid-cols-4 gap-2">
               {[
-                { id: 'CASH', label: 'Cash', icon: '💵' },
-                { id: 'UPI', label: 'UPI / QR', icon: '📱' },
-                { id: 'CARD', label: 'Card', icon: '💳' },
-                { id: 'SPLIT', label: 'Split', icon: '🔄' },
+                { id: 'CASH', label: 'Cash', icon: faMoneyBillWave },
+                { id: 'UPI', label: 'UPI / QR', icon: faMobileScreenButton },
+                { id: 'CARD', label: 'Card', icon: faCreditCard },
+                { id: 'SPLIT', label: 'Split', icon: faArrowsRotate },
               ].map((m) => (
                 <button
                   type="button"
@@ -77,7 +86,7 @@ export default function PaymentModal({ bill, onSettle, onClose, loading }: Payme
                       : 'bg-[#FFF9F6] text-slate-700 border-[#F3E5DC] hover:bg-orange-50'
                   }`}
                 >
-                  <span className="text-xl mb-1">{m.icon}</span>
+                  <FontAwesomeIcon icon={m.icon} className="text-lg mb-1.5" />
                   <span>{m.label}</span>
                 </button>
               ))}
@@ -162,7 +171,8 @@ export default function PaymentModal({ bill, onSettle, onClose, loading }: Payme
               disabled={loading}
               className="flex-1 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:brightness-105 text-white text-sm font-bold py-2.5 rounded-lg shadow-md flex items-center justify-center gap-2 transition-all"
             >
-              {loading ? 'Processing...' : 'Confirm & Settle'}
+              <FontAwesomeIcon icon={faCheck} />
+              <span>{loading ? 'Processing...' : 'Confirm & Settle'}</span>
             </button>
           </div>
         </form>

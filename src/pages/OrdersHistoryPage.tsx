@@ -4,6 +4,14 @@ import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
 import ThermalReceiptModal from '../components/billing/ThermalReceiptModal';
 import { Bill } from '../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faMagnifyingGlass,
+  faArrowsRotate,
+  faPrint,
+  faBan,
+  faTriangleExclamation,
+} from '@fortawesome/free-solid-svg-icons';
 
 export const OrdersHistoryPage: React.FC = () => {
   const { settings } = useSettings();
@@ -83,7 +91,7 @@ export const OrdersHistoryPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-5 max-w-7xl mx-auto">
+    <div className="space-y-5 max-w-7xl mx-auto font-sans">
       {/* Top Filter Bar */}
       <div className="bg-white border border-[#F3E5DC] p-4 rounded-2xl flex flex-col sm:flex-row gap-3 items-center justify-between shadow-sm">
         <form onSubmit={handleSearchSubmit} className="flex gap-2 w-full sm:w-80">
@@ -96,9 +104,10 @@ export const OrdersHistoryPage: React.FC = () => {
           />
           <button
             type="submit"
-            className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all shadow-sm"
+            className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5"
           >
-            Search
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
+            <span>Search</span>
           </button>
         </form>
 
@@ -119,9 +128,10 @@ export const OrdersHistoryPage: React.FC = () => {
 
           <button
             onClick={fetchBills}
-            className="bg-[#FFF9F6] hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold px-3 py-2 rounded-xl border border-[#F3E5DC] transition-colors"
+            className="bg-[#FFF9F6] hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold px-3 py-2 rounded-xl border border-[#F3E5DC] transition-colors flex items-center gap-1.5"
           >
-            Refresh 🔄
+            <FontAwesomeIcon icon={faArrowsRotate} className={loading ? 'animate-spin text-[#F67009]' : ''} />
+            <span>Refresh</span>
           </button>
         </div>
       </div>
@@ -198,19 +208,21 @@ export const OrdersHistoryPage: React.FC = () => {
                       <td className="p-3.5 text-right space-x-1.5">
                         <button
                           onClick={() => handleOpenReceipt(bill.billId)}
-                          className="px-2.5 py-1 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-lg border border-[#FED7AA] font-bold transition-colors"
+                          className="px-2.5 py-1 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-lg border border-[#FED7AA] font-bold transition-colors inline-flex items-center gap-1.5"
                           title="Reprint Thermal Receipt"
                         >
-                          🖨️ Receipt
+                          <FontAwesomeIcon icon={faPrint} />
+                          <span>Receipt</span>
                         </button>
 
                         {billStatus === 'ACTIVE' && (
                           <button
                             onClick={() => setCancelModalBill(bill)}
-                            className="px-2.5 py-1 bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white rounded-lg border border-rose-200 font-bold transition-colors"
+                            className="px-2.5 py-1 bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white rounded-lg border border-rose-200 font-bold transition-colors inline-flex items-center gap-1.5"
                             title="Cancel Bill"
                           >
-                            Cancel
+                            <FontAwesomeIcon icon={faBan} />
+                            <span>Cancel</span>
                           </button>
                         )}
                       </td>
@@ -233,8 +245,9 @@ export const OrdersHistoryPage: React.FC = () => {
       {cancelModalBill && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white border border-[#F3E5DC] rounded-3xl w-full max-w-md p-6 shadow-2xl">
-            <h3 className="text-base font-bold text-rose-600 mb-1">
-              ⚠️ Cancel Bill #{cancelModalBill.billNumber}
+            <h3 className="text-base font-bold text-rose-600 mb-1 flex items-center gap-2">
+              <FontAwesomeIcon icon={faTriangleExclamation} />
+              <span>Cancel Bill #{cancelModalBill.billNumber}</span>
             </h3>
             <p className="text-xs text-slate-500 mb-4">
               Cancelling a bill will release any associated table and log a permanent audit record into <code className="text-[#F67009] font-bold">tbl_ActivityHistory</code>.
@@ -267,9 +280,10 @@ export const OrdersHistoryPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold shadow-md transition-colors"
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold shadow-md transition-colors flex items-center gap-1.5"
                 >
-                  {actionLoading ? 'Cancelling...' : 'Confirm Cancellation'}
+                  <FontAwesomeIcon icon={faBan} />
+                  <span>{actionLoading ? 'Cancelling...' : 'Confirm Cancellation'}</span>
                 </button>
               </div>
             </form>

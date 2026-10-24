@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { useSettings } from '../../context/SettingsContext';
 import { BillItem } from '../../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faKitchenSet,
+  faPrint,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 
 interface KOTModalProps {
   items: Array<BillItem | { itemName: string; quantity: number; notes?: string }>;
@@ -30,13 +36,14 @@ export const KOTModal: React.FC<KOTModalProps> = ({
   const widthContainerClass = is58mm ? 'max-w-[240px]' : 'max-w-[320px]';
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 font-sans">
       <div className="bg-white border border-[#F3E5DC] rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden">
         {/* Header */}
         <div className="px-5 py-3 border-b border-[#F3E5DC] flex items-center justify-between bg-white">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-[#F67009] uppercase tracking-wider">
-              🍳 Kitchen Order Ticket (KOT)
+            <span className="text-xs font-bold text-[#F67009] uppercase tracking-wider flex items-center gap-1.5">
+              <FontAwesomeIcon icon={faKitchenSet} />
+              <span>Kitchen Order Ticket (KOT)</span>
             </span>
             <div className="flex items-center bg-[#FFF9F6] p-0.5 rounded-lg border border-[#F3E5DC]">
               <button
@@ -65,9 +72,9 @@ export const KOTModal: React.FC<KOTModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-700 text-xl px-2 leading-none font-bold"
+            className="text-slate-400 hover:text-slate-700 text-lg px-2 leading-none font-bold"
           >
-            &times;
+            <FontAwesomeIcon icon={faXmark} />
           </button>
         </div>
 
@@ -131,7 +138,7 @@ export const KOTModal: React.FC<KOTModalProps> = ({
             onClick={handlePrint}
             className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:brightness-105 text-white rounded-lg transition-all active:scale-95 flex items-center gap-1.5 shadow-sm"
           >
-            <span>🖨️</span>
+            <FontAwesomeIcon icon={faPrint} />
             <span>Print KOT Slip ({paperWidth})</span>
           </button>
         </div>
