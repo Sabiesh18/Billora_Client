@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
+import PostLoginLoader from './components/common/PostLoginLoader';
 import MainLayout from './layouts/MainLayout';
 import DashboardPage from './pages/DashboardPage';
 import BillingPage from './pages/BillingPage';
@@ -13,11 +14,16 @@ import UserManagementPage from './pages/UserManagementPage';
 import SettingsPage from './pages/SettingsPage';
 
 export const App: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isPostLoginLoading, dismissPostLoginLoader, user } = useAuth();
   const [activePage, setActivePage] = useState<string>('pos'); // Default to POS for immediate cashier productivity
 
   if (!isAuthenticated) {
     return <LoginPage />;
+  }
+
+  // Modern animation loader shown only after successful login
+  if (isPostLoginLoading) {
+    return <PostLoginLoader user={user} onFinish={dismissPostLoginLoader} />;
   }
 
   const renderActivePage = () => {

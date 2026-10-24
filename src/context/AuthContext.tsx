@@ -7,6 +7,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isAdmin: boolean;
   loading: boolean;
+  isPostLoginLoading: boolean;
+  dismissPostLoginLoader: () => void;
   login: (username: string, pass: string) => Promise<User>;
   logout: () => Promise<void>;
 }
@@ -23,10 +25,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   });
   const [loading, setLoading] = useState(false);
+  const [isPostLoginLoading, setIsPostLoginLoading] = useState(false);
 
   useEffect(() => {
     const handleExpired = () => {
       setUser(null);
+      setIsPostLoginLoading(false);
     };
     window.addEventListener('auth-expired', handleExpired);
     return () => window.removeEventListener('auth-expired', handleExpired);
@@ -45,10 +49,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(userObj));
       setUser(userObj);
+      // Trigger modern animation loader only on successful login
+      setIsPostLoginLoading(true);
       return userObj;
     } finally {
       setLoading(false);
     }
+  };
+
+  const dismissPostLoginLoader = () => {
+    setIsPostLoginLoading(false);
   };
 
   const logout = async (): Promise<void> => {
@@ -60,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       setUser(null);
+      setIsPostLoginLoading(false);
     }
   };
 
@@ -67,7 +78,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAdmin = user?.role === 'ADMIN';
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, isAdmin, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated,
+        isAdmin,
+        loading,
+        isPostLoginLoading,
+        dismissPostLoginLoader,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
