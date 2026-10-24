@@ -37,17 +37,17 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 select-none">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8 backdrop-blur-sm">
+    <div className="min-h-screen bg-[#FFF9F6] flex flex-col justify-center items-center p-4 select-none">
+      <div className="w-full max-w-md bg-white border border-[#F3E5DC] rounded-3xl shadow-xl p-8">
         {/* Logo and Restaurant Title */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/30 text-amber-500 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-inner">
+          <div className="w-16 h-16 bg-gradient-to-tr from-[#F67009] to-[#F88D3A] text-white rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-md">
             🍽️
           </div>
-          <h1 className="text-xl font-bold text-slate-100 tracking-tight">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
             {settings.restaurant_name || 'Billora POS'}
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Professional Offline Restaurant & Hotel Billing System
           </p>
         </div>
@@ -55,7 +55,7 @@ export const LoginPage: React.FC = () => {
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
               Username
             </label>
             <input
@@ -63,13 +63,13 @@ export const LoginPage: React.FC = () => {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
+              className="w-full bg-white border border-[#E5D7CE] rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F67009] focus:ring-1 focus:ring-[#F67009] transition-colors"
               placeholder="Enter username"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
               Password
             </label>
             <input
@@ -77,7 +77,7 @@ export const LoginPage: React.FC = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
+              className="w-full bg-white border border-[#E5D7CE] rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F67009] focus:ring-1 focus:ring-[#F67009] transition-colors"
               placeholder="Enter password"
             />
           </div>
@@ -85,11 +85,11 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={submitting || loading}
-            className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold py-2.5 px-4 rounded-lg text-sm shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2 flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white font-bold py-2.5 px-4 rounded-xl text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2 flex items-center justify-center gap-2"
           >
             {submitting ? (
               <>
-                <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></span>
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                 <span>Authenticating...</span>
               </>
             ) : (
@@ -98,37 +98,40 @@ export const LoginPage: React.FC = () => {
           </button>
         </form>
 
-        {/* Quick Demo Fill Buttons */}
-        <div className="mt-8 pt-6 border-t border-slate-800 text-center">
-          <p className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold mb-2">
+        {/* Quick Demo Logins */}
+        <div className="mt-8 pt-6 border-t border-[#F3E5DC]">
+          <p className="text-[11px] font-semibold text-slate-400 text-center uppercase tracking-wider mb-3">
             Quick Offline Demo Access
           </p>
-          <div className="flex justify-center gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
               onClick={() => setDemoCredentials('admin', 'password123')}
-              className="text-xs bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 px-2.5 py-1.5 rounded-md transition-colors font-medium"
+              className="px-2 py-1.5 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] border border-[#FED7AA] rounded-lg text-xs font-bold transition-colors"
             >
               Admin
             </button>
             <button
               type="button"
               onClick={() => setDemoCredentials('cashier', 'password123')}
-              className="text-xs bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 px-2.5 py-1.5 rounded-md transition-colors font-medium"
+              className="px-2 py-1.5 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] border border-[#FED7AA] rounded-lg text-xs font-bold transition-colors"
             >
               Cashier
             </button>
             <button
               type="button"
               onClick={() => setDemoCredentials('manager', 'password123')}
-              className="text-xs bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 px-2.5 py-1.5 rounded-md transition-colors font-medium"
+              className="px-2 py-1.5 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] border border-[#FED7AA] rounded-lg text-xs font-bold transition-colors"
             >
               Manager
             </button>
           </div>
-          <p className="text-[10px] text-slate-500 mt-3">
-            Secure offline credentials managed via local PostgreSQL
-          </p>
+        </div>
+
+        {/* Offline Badge */}
+        <div className="mt-6 flex items-center justify-center gap-1.5 text-[11px] text-emerald-600 font-semibold">
+          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>100% Offline Local Mode • PostgreSQL Connected</span>
         </div>
       </div>
     </div>

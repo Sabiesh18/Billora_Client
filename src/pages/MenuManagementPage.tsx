@@ -157,16 +157,16 @@ export const MenuManagementPage: React.FC = () => {
   return (
     <div className="space-y-5 max-w-7xl mx-auto">
       {/* Top Action Bar */}
-      <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <div className="bg-white border border-[#F3E5DC] p-4 rounded-2xl flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shadow-sm">
         <div>
-          <h2 className="text-base font-bold text-slate-100">Menu & Price Management</h2>
-          <p className="text-xs text-slate-400">Configure food items, categories, pricing, and availability</p>
+          <h2 className="text-base font-bold text-slate-900">Menu & Price Management</h2>
+          <p className="text-xs text-slate-500">Configure food items, categories, pricing, and availability</p>
         </div>
 
         <div className="flex gap-2">
           <button
             onClick={() => setCatModalOpen(true)}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-700 transition-colors"
+            className="bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] text-xs font-bold px-3.5 py-2 rounded-xl border border-[#FED7AA] transition-colors"
           >
             + Add Category
           </button>
@@ -175,7 +175,7 @@ export const MenuManagementPage: React.FC = () => {
               resetItemForm();
               setItemModalOpen(true);
             }}
-            className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-lg shadow transition-colors"
+            className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition-all"
           >
             + Add Menu Item
           </button>
@@ -186,10 +186,10 @@ export const MenuManagementPage: React.FC = () => {
       <div className="flex gap-2 overflow-x-auto pb-1">
         <button
           onClick={() => setSelectedCat('ALL')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
             selectedCat === 'ALL'
-              ? 'bg-amber-500 text-slate-950 font-bold'
-              : 'bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800'
+              ? 'bg-gradient-to-r from-[#F67009] to-[#F88D3A] text-white shadow-sm'
+              : 'bg-white text-slate-700 border border-[#F3E5DC] hover:bg-[#FFF0E6] hover:text-[#F67009]'
           }`}
         >
           All Items ({menuItems.length})
@@ -198,10 +198,10 @@ export const MenuManagementPage: React.FC = () => {
           <button
             key={c.categoryId}
             onClick={() => setSelectedCat(c.categoryId)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
               selectedCat === c.categoryId
-                ? 'bg-amber-500 text-slate-950 font-bold'
-                : 'bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800'
+                ? 'bg-gradient-to-r from-[#F67009] to-[#F88D3A] text-white shadow-sm'
+                : 'bg-white text-slate-700 border border-[#F3E5DC] hover:bg-[#FFF0E6] hover:text-[#F67009]'
             }`}
           >
             {c.categoryName} ({c.itemCount || 0})
@@ -210,10 +210,10 @@ export const MenuManagementPage: React.FC = () => {
       </div>
 
       {/* Items Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#F3E5DC] rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/60 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+            <thead className="bg-[#FFF9F6] text-slate-500 uppercase tracking-wider font-bold border-b border-[#F3E5DC]">
               <tr>
                 <th className="p-3.5">Code</th>
                 <th className="p-3.5">Item Name</th>
@@ -225,50 +225,50 @@ export const MenuManagementPage: React.FC = () => {
                 <th className="p-3.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-200">
+            <tbody className="divide-y divide-[#F3E5DC] text-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="p-8 text-center text-slate-500">
+                  <td colSpan={8} className="p-8 text-center text-slate-400">
                     Loading menu items...
                   </td>
                 </tr>
               ) : filteredItems.length > 0 ? (
                 filteredItems.map((item) => (
-                  <tr key={item.itemId} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="p-3.5 font-mono text-slate-400 font-bold">
+                  <tr key={item.itemId} className="hover:bg-[#FFF9F6] transition-colors">
+                    <td className="p-3.5 font-mono text-slate-500 font-bold">
                       {item.itemCode || '---'}
                     </td>
-                    <td className="p-3.5 font-bold text-slate-100">
+                    <td className="p-3.5 font-bold text-slate-900">
                       {item.itemName}
                       {item.description && (
-                        <p className="text-[10px] text-slate-400 font-normal mt-0.5 line-clamp-1">{item.description}</p>
+                        <p className="text-[10px] text-slate-500 font-normal mt-0.5 line-clamp-1">{item.description}</p>
                       )}
                     </td>
-                    <td className="p-3.5 text-slate-400">{item.categoryName}</td>
+                    <td className="p-3.5 text-slate-600">{item.categoryName}</td>
                     <td className="p-3.5">
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
                           item.foodType === 'VEG'
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
                             : item.foodType === 'NON_VEG'
-                            ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
-                            : 'bg-blue-500/10 text-blue-400 border border-blue-500/30'
+                            ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                            : 'bg-blue-50 text-blue-600 border border-blue-200'
                         }`}
                       >
                         {item.foodType}
                       </span>
                     </td>
-                    <td className="p-3.5 text-right font-black text-amber-400">
+                    <td className="p-3.5 text-right font-black text-[#F67009]">
                       {settings.currency_symbol || '₹'} {Number(item.price).toFixed(2)}
                     </td>
-                    <td className="p-3.5 text-center text-slate-400">{item.taxRate}%</td>
+                    <td className="p-3.5 text-center text-slate-600">{item.taxRate}%</td>
                     <td className="p-3.5 text-center">
                       <button
                         onClick={() => handleToggleAvailability(item)}
                         className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider transition-colors ${
                           item.isAvailable
-                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                            : 'bg-slate-800 text-slate-400 border border-slate-700'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-300'
+                            : 'bg-slate-100 text-slate-500 border border-slate-200'
                         }`}
                       >
                         {item.isAvailable ? 'In Stock' : 'Out of Stock'}
@@ -277,7 +277,7 @@ export const MenuManagementPage: React.FC = () => {
                     <td className="p-3.5 text-right">
                       <button
                         onClick={() => openEditItem(item)}
-                        className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 font-medium transition-colors"
+                        className="px-2.5 py-1 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-lg border border-[#FED7AA] font-bold transition-colors"
                       >
                         Edit
                       </button>
@@ -286,7 +286,7 @@ export const MenuManagementPage: React.FC = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={8} className="p-8 text-center text-slate-500">
+                  <td colSpan={8} className="p-8 text-center text-slate-400">
                     No menu items in this category.
                   </td>
                 </tr>
@@ -298,22 +298,22 @@ export const MenuManagementPage: React.FC = () => {
 
       {/* Add / Edit Item Modal */}
       {itemModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl">
-            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider mb-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-[#F3E5DC] rounded-3xl w-full max-w-md p-6 shadow-2xl">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
               {editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}
             </h3>
 
             <form onSubmit={handleSaveItem} className="space-y-3.5">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                     Category
                   </label>
                   <select
                     value={itemCategoryId}
                     onChange={(e) => setItemCategoryId(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-[#E5D7CE] rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                   >
                     {categories.map((c) => (
                       <option key={c.categoryId} value={c.categoryId}>
@@ -324,7 +324,7 @@ export const MenuManagementPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                     Item Code / SKU
                   </label>
                   <input
@@ -332,13 +332,13 @@ export const MenuManagementPage: React.FC = () => {
                     value={itemCode}
                     onChange={(e) => setItemCode(e.target.value)}
                     placeholder="e.g. STR-105"
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-[#E5D7CE] rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                   Item Name
                 </label>
                 <input
@@ -347,13 +347,13 @@ export const MenuManagementPage: React.FC = () => {
                   value={itemName}
                   onChange={(e) => setItemName(e.target.value)}
                   placeholder="e.g. Kadai Paneer"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-[#E5D7CE] rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                     Price ({settings.currency_symbol || '₹'})
                   </label>
                   <input
@@ -363,18 +363,18 @@ export const MenuManagementPage: React.FC = () => {
                     value={itemPrice}
                     onChange={(e) => setItemPrice(e.target.value)}
                     placeholder="0.00"
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-[#E5D7CE] rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                     Food Type
                   </label>
                   <select
                     value={itemFoodType}
                     onChange={(e) => setItemFoodType(e.target.value as FoodType)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-[#E5D7CE] rounded-xl px-2 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                   >
                     <option value="VEG">VEG</option>
                     <option value="NON_VEG">NON-VEG</option>
@@ -384,7 +384,7 @@ export const MenuManagementPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                     Tax Rate %
                   </label>
                   <input
@@ -392,20 +392,20 @@ export const MenuManagementPage: React.FC = () => {
                     step="0.01"
                     value={itemTaxRate}
                     onChange={(e) => setItemTaxRate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-[#E5D7CE] rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                   Description / Ingredients
                 </label>
                 <textarea
                   rows={2}
                   value={itemDesc}
                   onChange={(e) => setItemDesc(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-[#E5D7CE] rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                 ></textarea>
               </div>
 
@@ -414,14 +414,14 @@ export const MenuManagementPage: React.FC = () => {
                   type="button"
                   onClick={() => setItemModalOpen(false)}
                   disabled={submitting}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-colors"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition-colors"
+                  className="px-4 py-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white rounded-xl text-xs font-bold transition-all shadow-md"
                 >
                   {submitting ? 'Saving...' : 'Save Item'}
                 </button>
@@ -433,14 +433,14 @@ export const MenuManagementPage: React.FC = () => {
 
       {/* Add Category Modal */}
       {catModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 shadow-2xl">
-            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider mb-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-[#F3E5DC] rounded-3xl w-full max-w-sm p-6 shadow-2xl">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
               Add Food Category
             </h3>
             <form onSubmit={handleCreateCategory} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                   Category Name
                 </label>
                 <input
@@ -449,12 +449,12 @@ export const MenuManagementPage: React.FC = () => {
                   value={newCatName}
                   onChange={(e) => setNewCatName(e.target.value)}
                   placeholder="e.g. Seafood Specialties"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-[#E5D7CE] rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                   Description
                 </label>
                 <textarea
@@ -462,7 +462,7 @@ export const MenuManagementPage: React.FC = () => {
                   value={newCatDesc}
                   onChange={(e) => setNewCatDesc(e.target.value)}
                   placeholder="Optional notes"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-[#E5D7CE] rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                 ></textarea>
               </div>
 
@@ -470,13 +470,13 @@ export const MenuManagementPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setCatModalOpen(false)}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-colors"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition-colors"
+                  className="px-4 py-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white rounded-xl text-xs font-bold transition-all shadow-md"
                 >
                   Save Category
                 </button>

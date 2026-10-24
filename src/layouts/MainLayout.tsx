@@ -31,35 +31,35 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
   ];
 
   return (
-    <div className="flex h-screen bg-slate-950 overflow-hidden font-sans">
+    <div className="flex h-screen bg-[#FFF9F6] overflow-hidden font-sans">
       {/* Sidebar */}
-      <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between select-none shrink-0">
+      <aside className="w-64 bg-white border-r border-[#F3E5DC] flex flex-col justify-between select-none shrink-0 shadow-sm">
         <div>
           {/* Brand header */}
-          <div className="p-4 border-b border-slate-800 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-xl">
+          <div className="p-4 border-b border-[#F3E5DC] flex items-center gap-3 bg-[#FFF9F6]/60">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#F67009] to-[#F88D3A] text-white flex items-center justify-center text-xl shadow-md">
               🍳
             </div>
             <div className="overflow-hidden">
-              <h1 className="font-bold text-slate-100 text-sm truncate leading-tight">
+              <h1 className="font-bold text-slate-900 text-sm truncate leading-tight">
                 {settings.restaurant_name || 'Billora POS'}
               </h1>
-              <span className="text-[11px] text-amber-400 font-medium">Offline POS Engine</span>
+              <span className="text-[11px] text-[#F67009] font-semibold">Offline POS Engine</span>
             </div>
           </div>
 
           {/* Navigation Links */}
-          <nav className="p-2 space-y-1">
+          <nav className="p-3 space-y-1">
             {navigation.map(item => {
               const active = activePage === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => setActivePage(item.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     active
-                      ? 'bg-amber-500 text-slate-950 shadow-md font-semibold'
-                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                      ? 'bg-gradient-to-r from-[#F67009] to-[#F88D3A] text-white shadow-md font-semibold'
+                      : 'text-slate-600 hover:bg-[#FFF0E6] hover:text-[#F67009]'
                   }`}
                 >
                   <span className="text-base">{item.icon}</span>
@@ -71,26 +71,26 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
         </div>
 
         {/* User profile & system status */}
-        <div className="p-3 border-t border-slate-800 bg-slate-900/60">
+        <div className="p-3 border-t border-[#F3E5DC] bg-[#FFF9F6]/80">
           <div className="flex items-center justify-between mb-2 px-1">
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-[11px] text-emerald-400 font-medium">Local Database Ready</span>
+              <span className="text-[11px] text-emerald-600 font-semibold">Local Database Ready</span>
             </div>
-            <span className="text-[10px] text-slate-400 uppercase font-mono px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">
+            <span className="text-[10px] text-[#F67009] uppercase font-mono px-1.5 py-0.5 rounded bg-[#FFF0E6] border border-[#FED7AA] font-bold">
               {user?.role}
             </span>
           </div>
 
-          <div className="flex items-center justify-between bg-slate-800/80 p-2 rounded-lg border border-slate-700/60">
+          <div className="flex items-center justify-between bg-white p-2.5 rounded-xl border border-[#F3E5DC] shadow-xs">
             <div className="overflow-hidden pr-2">
-              <p className="text-xs font-medium text-slate-200 truncate">{user?.fullName}</p>
-              <p className="text-[10px] text-slate-400 truncate">@{user?.username}</p>
+              <p className="text-xs font-bold text-slate-800 truncate">{user?.fullName}</p>
+              <p className="text-[10px] text-slate-500 truncate">@{user?.username}</p>
             </div>
             <button
               onClick={logout}
               title="Logout"
-              className="text-xs bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white px-2 py-1 rounded transition-colors"
+              className="text-xs bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white px-2.5 py-1 rounded-lg font-medium transition-colors border border-rose-100"
             >
               Exit
             </button>
@@ -99,30 +99,29 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-slate-950">
-        <header className="h-14 border-b border-slate-800/80 bg-slate-900/40 px-6 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2 text-sm text-slate-400">
-            <span className="text-slate-500">System</span>
+      <main className="flex-1 flex flex-col overflow-hidden bg-[#FFF9F6]">
+        {/* Header */}
+        <header className="h-14 border-b border-[#F3E5DC] bg-white px-6 flex items-center justify-between shrink-0 shadow-xs">
+          <div className="flex items-center gap-2 text-sm text-slate-500">
+            <span className="text-slate-400">System</span>
             <span>/</span>
-            <span className="text-slate-200 font-semibold capitalize">
+            <span className="text-[#F67009] font-bold capitalize">
               {navigation.find(n => n.id === activePage)?.name || activePage}
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-xs text-slate-400">
-            <div className="hidden sm:flex items-center gap-2">
-              <span className="text-slate-500">Printer:</span>
-              <span className="font-semibold text-amber-400 uppercase">{settings.thermal_printer_width || '80mm'}</span>
+          <div className="flex items-center gap-4 text-xs text-slate-600">
+            <div className="hidden sm:flex items-center gap-2 bg-[#FFF9F6] border border-[#F3E5DC] px-2.5 py-1 rounded-lg">
+              <span className="text-slate-400">Printer:</span>
+              <span className="font-bold text-[#F67009] uppercase">{settings.receipt_paper_width || '80mm'}</span>
             </div>
-            <div className="h-4 w-px bg-slate-800 hidden sm:block"></div>
-            <div className="hidden sm:flex items-center gap-2">
-              <span className="text-slate-500">Currency:</span>
-              <span className="font-semibold text-slate-300">
+            <div className="hidden sm:flex items-center gap-2 bg-[#FFF9F6] border border-[#F3E5DC] px-2.5 py-1 rounded-lg">
+              <span className="text-slate-400">Currency:</span>
+              <span className="font-bold text-slate-700">
                 {settings.currency_symbol || '₹'} ({settings.currency_code || 'INR'})
               </span>
             </div>
-            <div className="h-4 w-px bg-slate-800 hidden sm:block"></div>
-            <div className="text-slate-300">
+            <div className="text-slate-600 font-medium">
               {new Date().toLocaleDateString('en-IN', {
                 weekday: 'short',
                 day: 'numeric',
@@ -133,7 +132,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
           </div>
         </header>
 
-        <section className="flex-1 overflow-auto p-4 md:p-6 bg-slate-950">
+        {/* Content Section */}
+        <section className="flex-1 overflow-auto p-4 md:p-6 bg-[#FFF9F6]">
           {children}
         </section>
       </main>

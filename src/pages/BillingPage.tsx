@@ -107,96 +107,100 @@ export const BillingPage: React.FC = () => {
 
   const clearCart = () => {
     setCart([]);
-    setDiscountType('NONE');
-    setDiscountValue(0);
+    setCurrentBillData(null);
     setNotes('');
+    setDiscountValue(0);
+    setDiscountType('NONE');
+    setCustomerName('');
+    setCustomerPhone('');
   };
 
-  // Filtered menu items
-  const filteredMenuItems = useMemo(() => {
-    return menuItems.filter((item) => {
-      const matchCat =
-        selectedCategory === 'ALL' || item.categoryId === selectedCategory;
-      const matchSearch =
-        !searchQuery ||
-        item.itemName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (item.itemCode &&
-          item.itemCode.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchCat && matchSearch;
-    });
-  }, [menuItems, selectedCategory, searchQuery]);
-
-  // Financial Calculations matching backend engine
+  // Financial Computations matching C# FinancialCalculator.cs logic
   const financialTotals = useMemo(() => {
-    const subTotal = cart.reduce(
-      (sum, item) => sum + item.quantity * item.unitPrice,
-      0
-    );
+    const subTotal = cart.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
 
     let discountAmount = 0;
     if (discountType === 'PERCENT') {
-      discountAmount = (subTotal * Math.min(Math.max(Number(discountValue) || 0, 0), 100)) / 100;
+      discountAmount = (subTotal * Math.min(Math.max(discountValue, 0), 100)) / 100;
     } else if (discountType === 'FLAT') {
-      discountAmount = Math.min(Number(discountValue) || 0, subTotal);
+      discountAmount = Math.min(Math.max(discountValue, 0), subTotal);
     }
 
-    const taxableAmount = Math.max(0, subTotal - discountAmount);
+    const taxableAmount = Math.max(subTotal - discountAmount, 0);
     const taxRate = Number(settings.default_tax_rate || 5);
     const taxAmount = (taxableAmount * taxRate) / 100;
 
-    const unroundedTotal = taxableAmount + taxAmount;
-    const grandTotal = Math.round(unroundedTotal);
-    const roundOff = Number((grandTotal - unroundedTotal).toFixed(2));
+    const rawGrandTotal = taxableAmount + taxAmount;
+    const roundedGrandTotal = Math.round(rawGrandTotal);
+    const roundOff = Number((roundedGrandTotal - rawGrandTotal).toFixed(2));
 
     return {
       subTotal: Number(subTotal.toFixed(2)),
       discountAmount: Number(discountAmount.toFixed(2)),
+      taxableAmount: Number(taxableAmount.toFixed(2)),
       taxRate,
       taxAmount: Number(taxAmount.toFixed(2)),
       roundOff,
-      grandTotal,
+      grandTotal: roundedGrandTotal,
     };
   }, [cart, discountType, discountValue, settings.default_tax_rate]);
 
-  // Handle Create / Save Bill
-  const handleCreateBill = async (): Promise<Bill | undefined> => {
+  // Filtered Menu Items
+  const filteredMenuItems = useMemo(() => {
+    return menuItems.filter((item) => {
+      const matchesCategory =
+        selectedCategory === 'ALL' || item.categoryId === selectedCategory;
+      const matchesSearch =
+        !searchQuery ||
+        item.itemName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.itemCode && item.itemCode.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesCategory && matchesSearch;
+    });
+  }, [menuItems, selectedCategory, searchQuery]);
+
+  // Bill Creation
+  const handleCreateBill = async (): Promise<Bill | null> => {
     if (cart.length === 0) {
-      showToast('Please add items to cart before creating bill', 'warning');
-      return;
+      showToast('Cannot save empty bill. Please add items.', 'warning');
+      return null;
     }
 
     if (orderType === 'DINE_IN' && !selectedTableId) {
-      showToast('Please select a dining table for Dine-in orders', 'warning');
-      return;
+      showToast('Please select a dining table for Dine-In orders', 'warning');
+      return null;
     }
 
     setProcessing(true);
     try {
       const payload = {
         orderType,
-        tableId: orderType === 'DINE_IN' ? selectedTableId : undefined,
-        customerName: customerName.trim() || 'Walk-in Guest',
-        customerPhone: customerPhone.trim() || undefined,
-        items: cart,
+        tableId: orderType === 'DINE_IN' ? selectedTableId : null,
+        customerName: customerName.trim() || (orderType === 'DINE_IN' ? 'Dine-In Guest' : 'Takeaway Customer'),
+        customerPhone: customerPhone.trim() || null,
+        items: cart.map((i) => ({
+          itemId: i.itemId,
+          itemName: i.itemName,
+          quantity: i.quantity,
+          unitPrice: i.unitPrice,
+          taxRate: i.taxRate,
+          notes: i.notes || '',
+        })),
         discountType,
-        discountValue: Number(discountValue) || 0,
-        notes: notes.trim() || undefined,
+        discountValue,
+        notes: notes.trim() || null,
       };
 
-      const result = await billApi.create(payload);
-      showToast('Bill #' + result.billNumber + ' created successfully!', 'success');
+      const billRes: any = await billApi.create(payload as any);
+      showToast(`Bill #${billRes.billNumber} created successfully!`, 'success');
+      setCurrentBillData(billRes);
 
-      // Fetch full bill details for printing/settling
-      const fullDetails = await billApi.getDetails(result.billId);
-      setCurrentBillData(fullDetails);
-
-      // Refresh tables to reflect occupancy
+      // Refresh tables to reflect OCCUPIED status
       const tbls = await tableApi.getAll();
       setTables(tbls || []);
 
-      return fullDetails;
+      return billRes;
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : 'Bill creation failed';
+      const errorMsg = err instanceof Error ? err.message : 'Failed to create bill';
       showToast('Bill creation failed: ' + errorMsg, 'error');
       throw err;
     } finally {
@@ -260,22 +264,22 @@ export const BillingPage: React.FC = () => {
   return (
     <div className="h-[calc(100vh-5.5rem)] flex flex-col lg:flex-row gap-4 overflow-hidden">
       {/* LEFT: Menu Catalog & Categories */}
-      <div className="flex-1 flex flex-col bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+      <div className="flex-1 flex flex-col bg-white border border-[#F3E5DC] rounded-2xl overflow-hidden shadow-sm">
         {/* Search & Order Mode Bar */}
-        <div className="p-3 border-b border-slate-800 bg-slate-950/40 flex flex-col sm:flex-row gap-3 items-center justify-between">
+        <div className="p-3 border-b border-[#F3E5DC] bg-[#FFF9F6] flex flex-col sm:flex-row gap-3 items-center justify-between">
           <div className="relative w-full sm:w-72">
-            <span className="absolute left-3 top-2.5 text-slate-500 text-sm">🔍</span>
+            <span className="absolute left-3 top-2.5 text-slate-400 text-sm">🔍</span>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search dishes or item code..."
-              className="w-full bg-slate-950 border border-slate-700/80 rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500"
+              className="w-full bg-white border border-[#E5D7CE] rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F67009] focus:ring-1 focus:ring-[#F67009]"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-2 text-slate-400 hover:text-white text-xs"
+                className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-700 text-xs"
               >
                 &times;
               </button>
@@ -283,19 +287,19 @@ export const BillingPage: React.FC = () => {
           </div>
 
           {/* Quick Categories count */}
-          <span className="text-xs text-slate-400 hidden sm:inline">
-            Showing <strong className="text-slate-200">{filteredMenuItems.length}</strong> items
+          <span className="text-xs text-slate-500 hidden sm:inline">
+            Showing <strong className="text-[#F67009] font-bold">{filteredMenuItems.length}</strong> items
           </span>
         </div>
 
         {/* Category Horizontal Filter Pills */}
-        <div className="px-3 py-2 border-b border-slate-800 flex gap-1.5 overflow-x-auto select-none bg-slate-900/80">
+        <div className="px-3 py-2 border-b border-[#F3E5DC] flex gap-1.5 overflow-x-auto select-none bg-white">
           <button
             onClick={() => setSelectedCategory('ALL')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
               selectedCategory === 'ALL'
-                ? 'bg-amber-500 text-slate-950 shadow-sm'
-                : 'bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800'
+                ? 'bg-gradient-to-r from-[#F67009] to-[#F88D3A] text-white shadow-sm'
+                : 'bg-[#FFF9F6] text-slate-700 hover:bg-[#FFF0E6] hover:text-[#F67009] border border-[#F3E5DC]'
             }`}
           >
             All Items
@@ -304,10 +308,10 @@ export const BillingPage: React.FC = () => {
             <button
               key={cat.categoryId}
               onClick={() => setSelectedCategory(cat.categoryId)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 selectedCategory === cat.categoryId
-                  ? 'bg-amber-500 text-slate-950 shadow-sm'
-                  : 'bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800'
+                  ? 'bg-gradient-to-r from-[#F67009] to-[#F88D3A] text-white shadow-sm'
+                  : 'bg-[#FFF9F6] text-slate-700 hover:bg-[#FFF0E6] hover:text-[#F67009] border border-[#F3E5DC]'
               }`}
             >
               {cat.categoryName}
@@ -316,10 +320,10 @@ export const BillingPage: React.FC = () => {
         </div>
 
         {/* Menu Items Grid */}
-        <div className="flex-1 overflow-y-auto p-3.5">
+        <div className="flex-1 overflow-y-auto p-3.5 bg-[#FFF9F6]">
           {loading ? (
             <div className="flex items-center justify-center h-48 text-slate-400 text-xs">
-              <span className="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mr-2"></span>
+              <span className="w-5 h-5 border-2 border-[#F67009] border-t-transparent rounded-full animate-spin mr-2"></span>
               Loading menu catalog...
             </div>
           ) : filteredMenuItems.length > 0 ? (
@@ -333,7 +337,7 @@ export const BillingPage: React.FC = () => {
                   <button
                     key={item.itemId}
                     onClick={() => addToCart(item)}
-                    className="group relative flex flex-col justify-between text-left p-3 rounded-xl bg-slate-950/70 hover:bg-slate-800/90 border border-slate-800 hover:border-amber-500/50 transition-all shadow-sm active:scale-[0.98]"
+                    className="group relative flex flex-col justify-between text-left p-3.5 rounded-2xl bg-white hover:bg-[#FFF9F6] border border-[#F3E5DC] hover:border-[#F88D3A] transition-all shadow-xs hover:shadow-md active:scale-[0.98]"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1.5">
@@ -361,22 +365,22 @@ export const BillingPage: React.FC = () => {
                         )}
                       </div>
 
-                      <h4 className="text-xs font-bold text-slate-100 group-hover:text-amber-400 line-clamp-2 leading-snug">
+                      <h4 className="text-xs font-bold text-slate-800 group-hover:text-[#F67009] line-clamp-2 leading-snug">
                         {item.itemName}
                       </h4>
                     </div>
 
-                    <div className="mt-3 flex items-center justify-between pt-2 border-t border-slate-800/60">
-                      <span className="text-xs font-black text-amber-400">
+                    <div className="mt-3 flex items-center justify-between pt-2 border-t border-[#F3E5DC]">
+                      <span className="text-xs font-black text-[#F67009]">
                         {settings.currency_symbol || '₹'} {Number(item.price).toFixed(2)}
                       </span>
 
                       {inCart ? (
-                        <span className="text-[11px] font-bold bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full">
+                        <span className="text-[11px] font-bold bg-gradient-to-r from-[#F67009] to-[#F88D3A] text-white px-2 py-0.5 rounded-full shadow-xs">
                           {inCart.quantity} in cart
                         </span>
                       ) : (
-                        <span className="text-xs text-slate-400 group-hover:text-white font-bold">
+                        <span className="text-xs text-slate-500 group-hover:text-[#F67009] font-bold">
                           + Add
                         </span>
                       )}
@@ -386,7 +390,7 @@ export const BillingPage: React.FC = () => {
               })}
             </div>
           ) : (
-            <div className="text-center py-16 text-slate-500 text-xs">
+            <div className="text-center py-16 text-slate-400 text-xs">
               No matching items found. Try another search or category.
             </div>
           )}
@@ -394,11 +398,11 @@ export const BillingPage: React.FC = () => {
       </div>
 
       {/* RIGHT: Live Bill & Cart Summary */}
-      <div className="w-full lg:w-[420px] bg-slate-900 border border-slate-800 rounded-2xl flex flex-col justify-between overflow-hidden shadow-xl shrink-0">
+      <div className="w-full lg:w-[420px] bg-white border border-[#F3E5DC] rounded-2xl flex flex-col justify-between overflow-hidden shadow-md shrink-0">
         {/* Cart Header & Order Type Selector */}
-        <div className="p-3 border-b border-slate-800 bg-slate-950/60 space-y-2.5">
+        <div className="p-3 border-b border-[#F3E5DC] bg-[#FFF9F6] space-y-2.5">
           {/* Order Type Tabs */}
-          <div className="grid grid-cols-3 gap-1 p-1 bg-slate-950 rounded-lg border border-slate-800 text-xs font-semibold">
+          <div className="grid grid-cols-3 gap-1 p-1 bg-white rounded-xl border border-[#F3E5DC] text-xs font-semibold">
             {[
               { id: 'DINE_IN', label: '🍽️ Dine-In' },
               { id: 'TAKEAWAY', label: '🛍️ Takeaway' },
@@ -408,10 +412,10 @@ export const BillingPage: React.FC = () => {
                 key={ot.id}
                 type="button"
                 onClick={() => setOrderType(ot.id)}
-                className={`py-1.5 rounded-md transition-all ${
+                className={`py-1.5 rounded-lg transition-all ${
                   orderType === ot.id
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-gradient-to-r from-[#F67009] to-[#F88D3A] text-white font-bold shadow-xs'
+                    : 'text-slate-600 hover:text-[#F67009]'
                 }`}
               >
                 {ot.label}
@@ -423,13 +427,13 @@ export const BillingPage: React.FC = () => {
           <div className="grid grid-cols-2 gap-2">
             {orderType === 'DINE_IN' ? (
               <div>
-                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                <label className="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">
                   Table
                 </label>
                 <select
                   value={selectedTableId}
                   onChange={(e) => setSelectedTableId(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-[#E5D7CE] rounded-lg px-2 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                 >
                   <option value="">Select Table</option>
                   {tables.map((t) => (
@@ -441,7 +445,7 @@ export const BillingPage: React.FC = () => {
               </div>
             ) : (
               <div>
-                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                <label className="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">
                   Customer Name
                 </label>
                 <input
@@ -449,13 +453,13 @@ export const BillingPage: React.FC = () => {
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="Guest Name"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-[#E5D7CE] rounded-lg px-2 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+              <label className="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">
                 Phone Number
               </label>
               <input
@@ -463,38 +467,38 @@ export const BillingPage: React.FC = () => {
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
                 placeholder="Optional"
-                className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                className="w-full bg-white border border-[#E5D7CE] rounded-lg px-2 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
               />
             </div>
           </div>
         </div>
 
         {/* Cart Items List */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-2 divide-y divide-slate-800/60">
+        <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-[#FFF9F6]">
           {cart.length > 0 ? (
             cart.map((item) => (
-              <div key={item.itemId} className="pt-2 first:pt-0 flex items-center justify-between gap-2">
+              <div key={item.itemId} className="p-2.5 rounded-xl bg-white border border-[#F3E5DC] flex items-center justify-between gap-2 shadow-xs">
                 <div className="flex-1 min-w-0 pr-1">
-                  <h5 className="text-xs font-semibold text-slate-200 truncate">{item.itemName}</h5>
-                  <p className="text-[11px] text-slate-400">
+                  <h5 className="text-xs font-bold text-slate-800 truncate">{item.itemName}</h5>
+                  <p className="text-[11px] text-slate-500">
                     {settings.currency_symbol || '₹'} {item.unitPrice.toFixed(2)} each
                   </p>
                 </div>
 
                 {/* Qty Stepper */}
-                <div className="flex items-center gap-1.5 bg-slate-950 border border-slate-800 rounded-lg px-1.5 py-1">
+                <div className="flex items-center gap-1.5 bg-[#FFF9F6] border border-[#F3E5DC] rounded-lg px-1.5 py-1">
                   <button
                     onClick={() => updateQuantity(item.itemId, -1)}
-                    className="w-5 h-5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center justify-center"
+                    className="w-5 h-5 rounded bg-white hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold flex items-center justify-center border border-[#E5D7CE]"
                   >
                     -
                   </button>
-                  <span className="w-5 text-center text-xs font-bold text-slate-100">
+                  <span className="w-5 text-center text-xs font-black text-slate-900">
                     {item.quantity}
                   </span>
                   <button
                     onClick={() => updateQuantity(item.itemId, 1)}
-                    className="w-5 h-5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center justify-center"
+                    className="w-5 h-5 rounded bg-white hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold flex items-center justify-center border border-[#E5D7CE]"
                   >
                     +
                   </button>
@@ -502,12 +506,12 @@ export const BillingPage: React.FC = () => {
 
                 {/* Line Total & Delete */}
                 <div className="text-right w-16">
-                  <p className="text-xs font-bold text-slate-100">
+                  <p className="text-xs font-black text-[#F67009]">
                     {settings.currency_symbol || '₹'} {(item.quantity * item.unitPrice).toFixed(2)}
                   </p>
                   <button
                     onClick={() => removeFromCart(item.itemId)}
-                    className="text-[10px] text-rose-400 hover:text-rose-300"
+                    className="text-[10px] text-rose-500 hover:text-rose-700 font-semibold"
                   >
                     Remove
                   </button>
@@ -515,21 +519,21 @@ export const BillingPage: React.FC = () => {
               </div>
             ))
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-slate-500 text-xs py-12">
-              <span className="text-3xl mb-2 opacity-50">🛒</span>
-              <p>Cart is currently empty</p>
-              <p className="text-[10px] text-slate-600">Select dishes from the menu catalog to begin</p>
+            <div className="h-full flex flex-col items-center justify-center text-slate-400 text-xs py-12">
+              <span className="text-3xl mb-2 opacity-60">🛒</span>
+              <p className="font-bold text-slate-600">Cart is currently empty</p>
+              <p className="text-[10px] text-slate-400">Select dishes from the menu catalog to begin</p>
             </div>
           )}
         </div>
 
         {/* Financial Summary & Bottom Settlement Toolbar */}
-        <div className="p-3.5 border-t border-slate-800 bg-slate-950/80 space-y-2.5">
+        <div className="p-3.5 border-t border-[#F3E5DC] bg-white space-y-2.5">
           {/* Subtotal & Discount row */}
-          <div className="space-y-1 text-xs text-slate-400">
+          <div className="space-y-1 text-xs text-slate-500">
             <div className="flex justify-between">
               <span>Items Subtotal:</span>
-              <span className="font-medium text-slate-200">
+              <span className="font-bold text-slate-800">
                 {settings.currency_symbol || '₹'} {financialTotals.subTotal.toFixed(2)}
               </span>
             </div>
@@ -541,7 +545,7 @@ export const BillingPage: React.FC = () => {
                 <select
                   value={discountType}
                   onChange={(e) => setDiscountType(e.target.value as 'NONE' | 'PERCENT' | 'FLAT')}
-                  className="bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-[11px] text-slate-300"
+                  className="bg-[#FFF9F6] border border-[#E5D7CE] rounded px-1.5 py-0.5 text-[11px] text-slate-700 font-medium"
                 >
                   <option value="NONE">None</option>
                   <option value="PERCENT">%</option>
@@ -553,24 +557,24 @@ export const BillingPage: React.FC = () => {
                     min="0"
                     value={discountValue}
                     onChange={(e) => setDiscountValue(Number(e.target.value))}
-                    className="w-12 bg-slate-900 border border-slate-700 rounded px-1 text-[11px] text-slate-200 text-right"
+                    className="w-12 bg-[#FFF9F6] border border-[#E5D7CE] rounded px-1 text-[11px] text-slate-800 text-right font-bold"
                   />
                 )}
               </span>
-              <span className="text-rose-400 font-medium">
+              <span className="text-rose-600 font-bold">
                 - {settings.currency_symbol || '₹'} {financialTotals.discountAmount.toFixed(2)}
               </span>
             </div>
 
             <div className="flex justify-between">
               <span>GST ({financialTotals.taxRate}%):</span>
-              <span className="text-slate-200">
+              <span className="font-bold text-slate-800">
                 {settings.currency_symbol || '₹'} {financialTotals.taxAmount.toFixed(2)}
               </span>
             </div>
 
             {financialTotals.roundOff !== 0 && (
-              <div className="flex justify-between text-[11px] text-slate-500">
+              <div className="flex justify-between text-[11px] text-slate-400">
                 <span>Round Off:</span>
                 <span>{financialTotals.roundOff > 0 ? `+${financialTotals.roundOff}` : financialTotals.roundOff}</span>
               </div>
@@ -578,9 +582,9 @@ export const BillingPage: React.FC = () => {
           </div>
 
           {/* Grand Total */}
-          <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
-            <span className="text-sm font-bold text-slate-200">Grand Total:</span>
-            <span className="text-xl font-black text-amber-400">
+          <div className="pt-2 border-t border-[#F3E5DC] flex items-center justify-between">
+            <span className="text-sm font-bold text-slate-700">Grand Total:</span>
+            <span className="text-2xl font-black text-[#F67009]">
               {settings.currency_symbol || '₹'} {financialTotals.grandTotal.toFixed(2)}
             </span>
           </div>
@@ -591,7 +595,7 @@ export const BillingPage: React.FC = () => {
               type="button"
               disabled={cart.length === 0}
               onClick={() => setKotModalOpen(true)}
-              className="py-2.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold border border-slate-700 disabled:opacity-50 transition-colors"
+              className="py-2.5 px-2 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-xl text-xs font-bold border border-[#FED7AA] disabled:opacity-50 transition-colors shadow-xs"
             >
               🍳 Print KOT
             </button>
@@ -600,7 +604,7 @@ export const BillingPage: React.FC = () => {
               type="button"
               disabled={cart.length === 0 || processing}
               onClick={handleCreateBill}
-              className="py-2.5 px-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold shadow disabled:opacity-50 transition-colors"
+              className="py-2.5 px-2 bg-white border-2 border-[#F67009] text-[#F67009] hover:bg-[#FFF0E6] rounded-xl text-xs font-bold disabled:opacity-50 transition-colors shadow-xs"
             >
               💾 Hold Bill
             </button>
@@ -609,7 +613,7 @@ export const BillingPage: React.FC = () => {
               type="button"
               disabled={cart.length === 0 || processing}
               onClick={handleProceedToPayment}
-              className="py-2.5 px-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-lg text-xs font-black shadow-lg disabled:opacity-50 transition-colors"
+              className="py-2.5 px-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white rounded-xl text-xs font-black shadow-md disabled:opacity-50 transition-all"
             >
               💰 Settle Bill
             </button>

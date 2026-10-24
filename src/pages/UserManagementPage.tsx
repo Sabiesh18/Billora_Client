@@ -70,16 +70,16 @@ export const UserManagementPage: React.FC = () => {
 
   return (
     <div className="space-y-5 max-w-7xl mx-auto">
-      {/* Top Header */}
-      <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      {/* Top Header Card */}
+      <div className="bg-white border border-[#F3E5DC] p-5 rounded-2xl shadow-sm flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
-          <h2 className="text-base font-bold text-slate-100">User & Access Management</h2>
-          <p className="text-xs text-slate-400">Manage cashier, manager, and administrator staff accounts</p>
+          <h2 className="text-base font-bold text-slate-900">User & Access Management</h2>
+          <p className="text-xs text-slate-500">Manage cashier, manager, and administrator staff accounts</p>
         </div>
 
         <button
           onClick={() => setModalOpen(true)}
-          className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5 transition-colors"
+          className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:brightness-105 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
         >
           <span>+</span>
           <span>Add Staff Account</span>
@@ -87,10 +87,10 @@ export const UserManagementPage: React.FC = () => {
       </div>
 
       {/* Users Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#F3E5DC] rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/60 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+            <thead className="bg-[#FFF9F6] text-slate-700 uppercase tracking-wider font-semibold border-b border-[#F3E5DC]">
               <tr>
                 <th className="p-3.5">Username</th>
                 <th className="p-3.5">Full Name</th>
@@ -101,7 +101,7 @@ export const UserManagementPage: React.FC = () => {
                 <th className="p-3.5">Created At</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-200">
+            <tbody className="divide-y divide-[#F3E5DC]/60 text-slate-800">
               {loading ? (
                 <tr>
                   <td colSpan={7} className="p-8 text-center text-slate-500">
@@ -110,28 +110,28 @@ export const UserManagementPage: React.FC = () => {
                 </tr>
               ) : users.length > 0 ? (
                 users.map((u) => (
-                  <tr key={u.userId} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="p-3.5 font-bold font-mono text-amber-400">
+                  <tr key={u.userId} className="hover:bg-[#FFF9F6]/60 transition-colors">
+                    <td className="p-3.5 font-bold font-mono text-[#F67009]">
                       @{u.username}
                     </td>
-                    <td className="p-3.5 text-slate-100 font-semibold">{u.fullName}</td>
+                    <td className="p-3.5 text-slate-900 font-semibold">{u.fullName}</td>
                     <td className="p-3.5">
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${
                           u.role === 'ADMIN'
-                            ? 'bg-purple-500/10 text-purple-400 border border-purple-500/30'
+                            ? 'bg-purple-100 text-purple-700 border border-purple-200'
                             : u.role === 'MANAGER'
-                            ? 'bg-blue-500/10 text-blue-400 border border-blue-500/30'
-                            : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                            ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                            : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
                         }`}
                       >
                         {u.role}
                       </span>
                     </td>
-                    <td className="p-3.5 text-slate-400">{u.email || '---'}</td>
-                    <td className="p-3.5 text-slate-400">{u.phone || '---'}</td>
+                    <td className="p-3.5 text-slate-600">{u.email || '---'}</td>
+                    <td className="p-3.5 text-slate-600">{u.phone || '---'}</td>
                     <td className="p-3.5 text-center">
-                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                         ACTIVE
                       </span>
                     </td>
@@ -154,16 +154,16 @@ export const UserManagementPage: React.FC = () => {
 
       {/* Create User Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl">
-            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider mb-4">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-[#F3E5DC] rounded-2xl w-full max-w-md p-6 shadow-2xl">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
               Add New Staff User
             </h3>
 
             <form onSubmit={handleCreateUser} className="space-y-3.5">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                     Username
                   </label>
                   <input
@@ -172,12 +172,12 @@ export const UserManagementPage: React.FC = () => {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="e.g. john_cashier"
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-[#FFF9F6] border border-[#F3E5DC] rounded-lg px-2.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#F67009]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                     Initial Password
                   </label>
                   <input
@@ -186,13 +186,13 @@ export const UserManagementPage: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Min 6 chars"
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-[#FFF9F6] border border-[#F3E5DC] rounded-lg px-2.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#F67009]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                   Full Name
                 </label>
                 <input
@@ -201,18 +201,18 @@ export const UserManagementPage: React.FC = () => {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="e.g. John Doe"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-[#FFF9F6] border border-[#F3E5DC] rounded-lg px-2.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#F67009]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                   Role
                 </label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-[#FFF9F6] border border-[#F3E5DC] rounded-lg px-2.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                 >
                   <option value="CASHIER">CASHIER (Billing & Orders)</option>
                   <option value="MANAGER">MANAGER (Reports & Menu)</option>
@@ -222,7 +222,7 @@ export const UserManagementPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                     Email (Optional)
                   </label>
                   <input
@@ -230,12 +230,12 @@ export const UserManagementPage: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="user@restaurant.com"
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-[#FFF9F6] border border-[#F3E5DC] rounded-lg px-2.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#F67009]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                     Phone (Optional)
                   </label>
                   <input
@@ -243,7 +243,7 @@ export const UserManagementPage: React.FC = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+91..."
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-[#FFF9F6] border border-[#F3E5DC] rounded-lg px-2.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#F67009]"
                   />
                 </div>
               </div>
@@ -253,14 +253,14 @@ export const UserManagementPage: React.FC = () => {
                   type="button"
                   onClick={() => setModalOpen(false)}
                   disabled={submitting}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-colors"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition-colors"
+                  className="px-4 py-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:brightness-105 text-white rounded-lg text-xs font-bold transition-all shadow-sm"
                 >
                   {submitting ? 'Creating...' : 'Create Account'}
                 </button>

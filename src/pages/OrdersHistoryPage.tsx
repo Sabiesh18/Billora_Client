@@ -85,18 +85,18 @@ export const OrdersHistoryPage: React.FC = () => {
   return (
     <div className="space-y-5 max-w-7xl mx-auto">
       {/* Top Filter Bar */}
-      <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row gap-3 items-center justify-between">
+      <div className="bg-white border border-[#F3E5DC] p-4 rounded-2xl flex flex-col sm:flex-row gap-3 items-center justify-between shadow-sm">
         <form onSubmit={handleSearchSubmit} className="flex gap-2 w-full sm:w-80">
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search Invoice # or Customer..."
-            className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500"
+            className="w-full bg-white border border-[#E5D7CE] rounded-xl px-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F67009]"
           />
           <button
             type="submit"
-            className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3 py-2 rounded-lg transition-colors"
+            className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all shadow-sm"
           >
             Search
           </button>
@@ -109,7 +109,7 @@ export const OrdersHistoryPage: React.FC = () => {
               setStatusFilter(e.target.value);
               setPage(1);
             }}
-            className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+            className="bg-white border border-[#E5D7CE] rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
           >
             <option value="">All Statuses</option>
             <option value="ACTIVE">ACTIVE (Open)</option>
@@ -119,7 +119,7 @@ export const OrdersHistoryPage: React.FC = () => {
 
           <button
             onClick={fetchBills}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-700 transition-colors"
+            className="bg-[#FFF9F6] hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold px-3 py-2 rounded-xl border border-[#F3E5DC] transition-colors"
           >
             Refresh 🔄
           </button>
@@ -127,10 +127,10 @@ export const OrdersHistoryPage: React.FC = () => {
       </div>
 
       {/* Bills Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#F3E5DC] rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/60 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+            <thead className="bg-[#FFF9F6] text-slate-500 uppercase tracking-wider font-bold border-b border-[#F3E5DC]">
               <tr>
                 <th className="p-3.5">Invoice #</th>
                 <th className="p-3.5">Date & Time</th>
@@ -142,10 +142,10 @@ export const OrdersHistoryPage: React.FC = () => {
                 <th className="p-3.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-200">
+            <tbody className="divide-y divide-[#F3E5DC] text-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="p-8 text-center text-slate-500">
+                  <td colSpan={8} className="p-8 text-center text-slate-400">
                     Loading invoices...
                   </td>
                 </tr>
@@ -153,32 +153,32 @@ export const OrdersHistoryPage: React.FC = () => {
                 bills.map((bill) => {
                   const billStatus = bill.billStatus || bill.status || 'ACTIVE';
                   return (
-                    <tr key={bill.billId} className="hover:bg-slate-800/40 transition-colors">
-                      <td className="p-3.5 font-bold text-amber-400 font-mono">
+                    <tr key={bill.billId} className="hover:bg-[#FFF9F6] transition-colors">
+                      <td className="p-3.5 font-bold text-[#F67009] font-mono">
                         {bill.billNumber}
                       </td>
-                      <td className="p-3.5 text-slate-400">
+                      <td className="p-3.5 text-slate-600">
                         {bill.createdAt ? new Date(bill.createdAt).toLocaleDateString('en-IN') : 'N/A'}{' '}
-                        <span className="text-[10px]">
+                        <span className="text-[10px] text-slate-400">
                           {bill.createdAt ? new Date(bill.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : ''}
                         </span>
                       </td>
                       <td className="p-3.5">
-                        <span className="font-medium text-slate-300">{bill.orderType}</span>
+                        <span className="font-bold text-slate-800">{bill.orderType}</span>
                         {bill.tableNumber && bill.tableNumber !== 'N/A' && (
-                          <span className="ml-1.5 text-[10px] bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 border border-slate-700">
+                          <span className="ml-1.5 text-[10px] bg-[#FFF0E6] px-1.5 py-0.5 rounded text-[#F67009] border border-[#FED7AA] font-bold">
                             {bill.tableNumber}
                           </span>
                         )}
                       </td>
-                      <td className="p-3.5 text-slate-300">
+                      <td className="p-3.5 text-slate-700">
                         {bill.customerName || 'Walk-in Guest'}
                       </td>
-                      <td className="p-3.5 text-right font-bold text-slate-100">
+                      <td className="p-3.5 text-right font-black text-slate-900">
                         {settings.currency_symbol || '₹'} {Number(bill.grandTotal).toFixed(2)}
                       </td>
                       <td className="p-3.5 text-center">
-                        <span className="font-mono text-[10px] uppercase px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                        <span className="font-mono text-[10px] uppercase px-2 py-0.5 rounded bg-[#FFF9F6] text-slate-700 border border-[#E5D7CE] font-bold">
                           {bill.paymentMode || 'PENDING'}
                         </span>
                       </td>
@@ -186,10 +186,10 @@ export const OrdersHistoryPage: React.FC = () => {
                         <span
                           className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
                             billStatus === 'SETTLED' || billStatus === 'PAID'
-                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                              ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
                               : billStatus === 'ACTIVE'
-                              ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                              : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                              ? 'bg-[#FFF0E6] text-[#F67009] border border-[#FED7AA]'
+                              : 'bg-rose-50 text-rose-600 border border-rose-200'
                           }`}
                         >
                           {billStatus}
@@ -198,7 +198,7 @@ export const OrdersHistoryPage: React.FC = () => {
                       <td className="p-3.5 text-right space-x-1.5">
                         <button
                           onClick={() => handleOpenReceipt(bill.billId)}
-                          className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 font-semibold transition-colors"
+                          className="px-2.5 py-1 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-lg border border-[#FED7AA] font-bold transition-colors"
                           title="Reprint Thermal Receipt"
                         >
                           🖨️ Receipt
@@ -207,7 +207,7 @@ export const OrdersHistoryPage: React.FC = () => {
                         {billStatus === 'ACTIVE' && (
                           <button
                             onClick={() => setCancelModalBill(bill)}
-                            className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white rounded border border-rose-500/30 font-semibold transition-colors"
+                            className="px-2.5 py-1 bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white rounded-lg border border-rose-200 font-bold transition-colors"
                             title="Cancel Bill"
                           >
                             Cancel
@@ -219,7 +219,7 @@ export const OrdersHistoryPage: React.FC = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan={8} className="p-8 text-center text-slate-500">
+                  <td colSpan={8} className="p-8 text-center text-slate-400">
                     No transactions found matching criteria.
                   </td>
                 </tr>
@@ -231,18 +231,18 @@ export const OrdersHistoryPage: React.FC = () => {
 
       {/* Cancellation Reason Modal with Audit Confirmation */}
       {cancelModalBill && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl">
-            <h3 className="text-base font-bold text-rose-400 mb-1">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-[#F3E5DC] rounded-3xl w-full max-w-md p-6 shadow-2xl">
+            <h3 className="text-base font-bold text-rose-600 mb-1">
               ⚠️ Cancel Bill #{cancelModalBill.billNumber}
             </h3>
-            <p className="text-xs text-slate-400 mb-4">
-              Cancelling a bill will release any associated table and log a permanent audit record into <code className="text-amber-400">tbl_ActivityHistory</code>.
+            <p className="text-xs text-slate-500 mb-4">
+              Cancelling a bill will release any associated table and log a permanent audit record into <code className="text-[#F67009] font-bold">tbl_ActivityHistory</code>.
             </p>
 
             <form onSubmit={handleConfirmCancel} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                   Reason for Cancellation (Required)
                 </label>
                 <textarea
@@ -251,7 +251,7 @@ export const OrdersHistoryPage: React.FC = () => {
                   value={cancellationReason}
                   onChange={(e) => setCancellationReason(e.target.value)}
                   placeholder="e.g. Customer cancelled order, wrong table punched, punch error"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-rose-500"
+                  className="w-full bg-white border border-[#E5D7CE] rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-rose-500"
                 ></textarea>
               </div>
 
@@ -260,14 +260,14 @@ export const OrdersHistoryPage: React.FC = () => {
                   type="button"
                   onClick={() => setCancelModalBill(null)}
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-colors"
+                  className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold transition-colors"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold shadow-lg transition-colors"
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold shadow-md transition-colors"
                 >
                   {actionLoading ? 'Cancelling...' : 'Confirm Cancellation'}
                 </button>

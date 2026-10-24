@@ -85,16 +85,16 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
   return (
     <div className="space-y-5 max-w-7xl mx-auto">
       {/* Top Header & Area Pills */}
-      <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <div className="bg-white border border-[#F3E5DC] p-4 rounded-2xl flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shadow-sm">
         <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
           {areas.map((area) => (
             <button
               key={area}
               onClick={() => setSelectedArea(area)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 selectedArea === area
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow'
-                  : 'bg-slate-950 text-slate-300 border border-slate-800 hover:bg-slate-800'
+                  ? 'bg-gradient-to-r from-[#F67009] to-[#F88D3A] text-white shadow-sm'
+                  : 'bg-[#FFF9F6] text-slate-700 border border-[#F3E5DC] hover:bg-[#FFF0E6] hover:text-[#F67009]'
               }`}
             >
               {area === 'ALL' ? 'All Dining Areas' : area}
@@ -105,14 +105,14 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
         <div className="flex gap-2">
           <button
             onClick={() => setNewTableModal(true)}
-            className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5 transition-colors"
+            className="bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md flex items-center gap-1.5 transition-all"
           >
             <span>+</span>
             <span>Add Table</span>
           </button>
           <button
             onClick={fetchTables}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-700 transition-colors"
+            className="bg-[#FFF9F6] hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold px-3 py-2 rounded-xl border border-[#F3E5DC] transition-colors"
           >
             Refresh 🔄
           </button>
@@ -121,7 +121,7 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
 
       {/* Tables Grid */}
       {loading ? (
-        <div className="p-12 text-center text-slate-500 text-sm">
+        <div className="p-12 text-center text-slate-400 text-sm">
           <span className="inline-block animate-spin mr-2">⏳</span> Loading dining tables...
         </div>
       ) : (
@@ -131,38 +131,38 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
             return (
               <div
                 key={t.tableId}
-                className={`flex flex-col justify-between p-4 rounded-2xl border transition-all shadow-sm ${
+                className={`flex flex-col justify-between p-4 rounded-2xl border transition-all shadow-sm hover:shadow-md ${
                   isOccupied
-                    ? 'bg-amber-950/20 border-amber-500/40'
-                    : 'bg-slate-900 border-slate-800 hover:border-slate-700'
+                    ? 'bg-[#FFF9F6] border-2 border-[#F67009]/80 shadow-md'
+                    : 'bg-white border-[#F3E5DC] hover:border-[#F88D3A]'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-base font-black text-slate-100 font-mono">
+                    <span className="text-base font-black text-slate-900 font-mono">
                       {t.tableNumber}
                     </span>
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                         isOccupied
-                          ? 'bg-amber-500 text-slate-950'
-                          : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                          ? 'bg-gradient-to-r from-[#F67009] to-[#F88D3A] text-white shadow-xs'
+                          : 'bg-emerald-50 text-emerald-600 border border-emerald-200'
                       }`}
                     >
                       {t.status}
                     </span>
                   </div>
 
-                  <p className="text-[11px] text-slate-400">
-                    Capacity: <strong className="text-slate-300">{t.seatingCapacity} Seats</strong>
+                  <p className="text-[11px] text-slate-500">
+                    Capacity: <strong className="text-slate-800">{t.seatingCapacity} Seats</strong>
                   </p>
-                  <p className="text-[10px] text-slate-500 truncate">{t.locationArea}</p>
+                  <p className="text-[10px] text-slate-400 truncate">{t.locationArea}</p>
 
                   {isOccupied && (
-                    <div className="mt-3 p-2 bg-slate-950/80 rounded-lg border border-slate-800">
-                      <p className="text-[10px] text-slate-400 font-mono">{t.billNumber || 'Order active'}</p>
+                    <div className="mt-3 p-2 bg-white rounded-xl border border-[#F3E5DC] shadow-xs">
+                      <p className="text-[10px] text-slate-500 font-mono">{t.billNumber || 'Order active'}</p>
                       {t.grandTotal && (
-                        <p className="text-xs font-bold text-amber-400 mt-0.5">
+                        <p className="text-xs font-black text-[#F67009] mt-0.5">
                           {settings.currency_symbol || '₹'} {Number(t.grandTotal).toFixed(2)}
                         </p>
                       )}
@@ -170,10 +170,10 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
                   )}
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-800/80 flex gap-2">
+                <div className="mt-4 pt-3 border-t border-[#F3E5DC] flex gap-2">
                   <button
                     onClick={() => handleQuickStatusChange(t.tableId, t.status)}
-                    className="flex-1 py-1.5 text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 transition-colors"
+                    className="flex-1 py-1.5 text-[11px] font-bold bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-xl border border-[#FED7AA] transition-colors"
                   >
                     {isOccupied ? 'Free Table' : 'Mark Occupied'}
                   </button>
@@ -186,15 +186,15 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
 
       {/* Add Table Modal */}
       {newTableModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 shadow-2xl">
-            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider mb-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-[#F3E5DC] rounded-3xl w-full max-w-sm p-6 shadow-2xl">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
               Add New Dining Table
             </h3>
 
             <form onSubmit={handleCreateTable} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                   Table Number
                 </label>
                 <input
@@ -203,12 +203,12 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
                   value={tableNumber}
                   onChange={(e) => setTableNumber(e.target.value)}
                   placeholder="e.g. T-13, T-VIP, Bar-01"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-[#E5D7CE] rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                   Seating Capacity
                 </label>
                 <input
@@ -218,12 +218,12 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
                   required
                   value={capacity}
                   onChange={(e) => setCapacity(Number(e.target.value))}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-[#E5D7CE] rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                   Dining Area / Floor
                 </label>
                 <input
@@ -231,7 +231,7 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
                   value={locationArea}
                   onChange={(e) => setLocationArea(e.target.value)}
                   placeholder="e.g. Ground Floor, Rooftop, AC Hall"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-[#E5D7CE] rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
                 />
               </div>
 
@@ -240,14 +240,14 @@ export const TableManagementPage: React.FC<TableManagementPageProps> = () => {
                   type="button"
                   onClick={() => setNewTableModal(false)}
                   disabled={submitting}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-colors"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition-colors"
+                  className="px-4 py-2 bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:opacity-95 text-white rounded-xl text-xs font-bold transition-all shadow-md"
                 >
                   {submitting ? 'Creating...' : 'Save Table'}
                 </button>

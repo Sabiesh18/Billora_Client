@@ -35,13 +35,13 @@ export const ActivityAuditPage: React.FC = () => {
   return (
     <div className="space-y-5 max-w-7xl mx-auto">
       {/* Header & Filter */}
-      <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <div className="bg-white border border-[#F3E5DC] p-4 rounded-2xl flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shadow-sm">
         <div>
-          <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <span>🛡️</span> Unified Activity & Security Audit Trail
           </h2>
-          <p className="text-xs text-slate-400">
-            Immutable system event logs recorded in <code className="text-amber-400 font-mono">tbl_ActivityHistory</code>
+          <p className="text-xs text-slate-500">
+            Immutable system event logs recorded in <code className="text-[#F67009] font-mono font-bold">tbl_ActivityHistory</code>
           </p>
         </div>
 
@@ -52,7 +52,7 @@ export const ActivityAuditPage: React.FC = () => {
               setModuleFilter(e.target.value);
               setPage(1);
             }}
-            className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+            className="bg-white border border-[#E5D7CE] rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
           >
             <option value="">All Modules</option>
             <option value="AUTH">AUTH (Logins/Logouts)</option>
@@ -65,7 +65,7 @@ export const ActivityAuditPage: React.FC = () => {
 
           <button
             onClick={fetchLogs}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-700 transition-colors"
+            className="bg-[#FFF9F6] hover:bg-[#FFF0E6] text-slate-700 hover:text-[#F67009] text-xs font-bold px-3.5 py-2 rounded-xl border border-[#F3E5DC] transition-colors"
           >
             Refresh 🔄
           </button>
@@ -73,10 +73,10 @@ export const ActivityAuditPage: React.FC = () => {
       </div>
 
       {/* Audit Log Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#F3E5DC] rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/60 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+            <thead className="bg-[#FFF9F6] text-slate-500 uppercase tracking-wider font-bold border-b border-[#F3E5DC]">
               <tr>
                 <th className="p-3.5">Timestamp</th>
                 <th className="p-3.5">Actor / User</th>
@@ -87,10 +87,10 @@ export const ActivityAuditPage: React.FC = () => {
                 <th className="p-3.5 text-right">Details</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-200">
+            <tbody className="divide-y divide-[#F3E5DC] text-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-slate-500">
+                  <td colSpan={7} className="p-8 text-center text-slate-400">
                     Loading security audit logs...
                   </td>
                 </tr>
@@ -100,35 +100,35 @@ export const ActivityAuditPage: React.FC = () => {
                   const isFailed = log.activityType.includes('FAIL');
 
                   return (
-                    <tr key={log.activityId} className="hover:bg-slate-800/40 transition-colors">
-                      <td className="p-3.5 text-slate-400 font-mono whitespace-nowrap">
+                    <tr key={log.activityId} className="hover:bg-[#FFF9F6] transition-colors">
+                      <td className="p-3.5 text-slate-500 font-mono whitespace-nowrap">
                         {new Date(log.createdAt).toLocaleDateString('en-IN')}{' '}
-                        <span className="text-[10px]">
+                        <span className="text-[10px] text-slate-400">
                           {new Date(log.createdAt).toLocaleTimeString('en-IN')}
                         </span>
                       </td>
-                      <td className="p-3.5 font-bold text-slate-100">
+                      <td className="p-3.5 font-bold text-slate-900">
                         {log.username || 'SYSTEM'}
                       </td>
                       <td className="p-3.5">
-                        <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                        <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-[#FFF9F6] text-slate-700 border border-[#E5D7CE] font-bold">
                           {log.module}
                         </span>
                       </td>
                       <td className="p-3.5">
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
                             isFailed
-                              ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                              ? 'bg-rose-50 text-rose-600 border border-rose-200'
                               : isBilling
-                              ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                              : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                              ? 'bg-[#FFF0E6] text-[#F67009] border border-[#FED7AA]'
+                              : 'bg-emerald-50 text-emerald-600 border border-emerald-200'
                           }`}
                         >
                           {log.activityType}
                         </span>
                       </td>
-                      <td className="p-3.5 text-slate-300 max-w-xs truncate" title={log.description}>
+                      <td className="p-3.5 text-slate-700 max-w-xs truncate" title={log.description}>
                         {log.description}
                       </td>
                       <td className="p-3.5 font-mono text-[11px] text-slate-400">
@@ -138,7 +138,7 @@ export const ActivityAuditPage: React.FC = () => {
                         {(log.oldValue || log.newValue) && (
                           <button
                             onClick={() => setInspectLog(log)}
-                            className="px-2 py-1 text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition-colors"
+                            className="px-2.5 py-1 text-[11px] font-bold bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-lg border border-[#FED7AA] transition-colors"
                           >
                             Inspect JSON
                           </button>
@@ -149,7 +149,7 @@ export const ActivityAuditPage: React.FC = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-slate-500">
+                  <td colSpan={7} className="p-8 text-center text-slate-400">
                     No activity logs recorded.
                   </td>
                 </tr>
@@ -161,15 +161,15 @@ export const ActivityAuditPage: React.FC = () => {
 
       {/* JSON Inspector Modal */}
       {inspectLog && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
-              <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-[#F3E5DC] rounded-3xl w-full max-w-lg p-6 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-[#F3E5DC] mb-4">
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
                 Event Payload Audit: {inspectLog.activityType}
               </h3>
               <button
                 onClick={() => setInspectLog(null)}
-                className="text-slate-400 hover:text-white text-xl"
+                className="text-slate-400 hover:text-slate-700 text-xl font-bold"
               >
                 &times;
               </button>
@@ -178,10 +178,10 @@ export const ActivityAuditPage: React.FC = () => {
             <div className="space-y-4">
               {inspectLog.oldValue && (
                 <div>
-                  <span className="text-xs font-semibold text-rose-400 uppercase tracking-wider block mb-1">
+                  <span className="text-xs font-bold text-rose-600 uppercase tracking-wider block mb-1">
                     Previous State (Before)
                   </span>
-                  <pre className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono text-slate-300 overflow-x-auto max-h-48">
+                  <pre className="p-3 rounded-xl bg-[#FFF9F6] border border-[#F3E5DC] text-[11px] font-mono text-slate-800 overflow-x-auto max-h-48">
                     {typeof inspectLog.oldValue === 'string'
                       ? inspectLog.oldValue
                       : JSON.stringify(inspectLog.oldValue, null, 2)}
@@ -191,10 +191,10 @@ export const ActivityAuditPage: React.FC = () => {
 
               {inspectLog.newValue && (
                 <div>
-                  <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider block mb-1">
+                  <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider block mb-1">
                     Updated State (After)
                   </span>
-                  <pre className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono text-slate-300 overflow-x-auto max-h-48">
+                  <pre className="p-3 rounded-xl bg-[#FFF9F6] border border-[#F3E5DC] text-[11px] font-mono text-slate-800 overflow-x-auto max-h-48">
                     {typeof inspectLog.newValue === 'string'
                       ? inspectLog.newValue
                       : JSON.stringify(inspectLog.newValue, null, 2)}
@@ -203,10 +203,10 @@ export const ActivityAuditPage: React.FC = () => {
               )}
             </div>
 
-            <div className="flex justify-end pt-4 mt-2 border-t border-slate-800">
+            <div className="flex justify-end pt-4 mt-2 border-t border-[#F3E5DC]">
               <button
                 onClick={() => setInspectLog(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg transition-colors"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
               >
                 Close
               </button>

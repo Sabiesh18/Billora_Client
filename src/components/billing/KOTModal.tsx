@@ -30,22 +30,22 @@ export const KOTModal: React.FC<KOTModalProps> = ({
   const widthContainerClass = is58mm ? 'max-w-[240px]' : 'max-w-[320px]';
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white border border-[#F3E5DC] rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="px-5 py-3 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+        <div className="px-5 py-3 border-b border-[#F3E5DC] flex items-center justify-between bg-white">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
+            <span className="text-xs font-bold text-[#F67009] uppercase tracking-wider">
               🍳 Kitchen Order Ticket (KOT)
             </span>
-            <div className="flex items-center bg-slate-800/80 p-0.5 rounded-lg border border-slate-700">
+            <div className="flex items-center bg-[#FFF9F6] p-0.5 rounded-lg border border-[#F3E5DC]">
               <button
                 type="button"
                 onClick={() => setPaperWidth('80mm')}
                 className={`px-2 py-0.5 text-[10px] font-semibold rounded ${
                   paperWidth === '80mm'
-                    ? 'bg-amber-500 text-slate-950 font-bold'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-gradient-to-r from-[#F67009] to-[#F88D3A] text-white font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 80mm
@@ -55,8 +55,8 @@ export const KOTModal: React.FC<KOTModalProps> = ({
                 onClick={() => setPaperWidth('58mm')}
                 className={`px-2 py-0.5 text-[10px] font-semibold rounded ${
                   paperWidth === '58mm'
-                    ? 'bg-amber-500 text-slate-950 font-bold'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-gradient-to-r from-[#F67009] to-[#F88D3A] text-white font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 58mm
@@ -65,19 +65,19 @@ export const KOTModal: React.FC<KOTModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white text-xl px-2 leading-none"
+            className="text-slate-400 hover:text-slate-700 text-xl px-2 leading-none font-bold"
           >
             &times;
           </button>
         </div>
 
         {/* Printable Area Container */}
-        <div className="p-6 bg-slate-950/70 flex justify-center overflow-y-auto max-h-[75vh]">
+        <div className="p-6 bg-[#FFF9F6] flex justify-center overflow-y-auto max-h-[75vh]">
           <div
             id="thermal-receipt-print-area"
             className={`w-full ${widthContainerClass} format-${paperWidth} bg-white text-black p-3.5 font-mono ${
               is58mm ? 'text-[10px]' : 'text-[11px]'
-            } leading-tight rounded-sm shadow-md`}
+            } leading-tight rounded-sm shadow-md border border-[#F3E5DC]`}
           >
             <div className="text-center pb-2 border-b-2 border-black mb-2">
               <h2 className="text-base font-black tracking-widest uppercase">*** K. O. T. ***</h2>
@@ -120,16 +120,16 @@ export const KOTModal: React.FC<KOTModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-3 border-t border-slate-800 bg-slate-950 flex justify-end gap-2">
+        <div className="p-3 border-t border-[#F3E5DC] bg-white flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="px-3.5 py-1.5 text-xs text-slate-300 hover:bg-slate-800 rounded-lg transition-colors"
+            className="px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handlePrint}
-            className="px-4 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg transition-all active:scale-95 flex items-center gap-1.5 shadow"
+            className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-[#F67009] to-[#F88D3A] hover:brightness-105 text-white rounded-lg transition-all active:scale-95 flex items-center gap-1.5 shadow-sm"
           >
             <span>🖨️</span>
             <span>Print KOT Slip ({paperWidth})</span>
