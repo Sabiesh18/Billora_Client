@@ -94,6 +94,8 @@ export interface RestaurantTable {
   billCreatedAt?: string;
 }
 
+export type Table = RestaurantTable;
+
 export interface BillItem {
   billItemId?: string;
   itemId: string;
