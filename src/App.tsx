@@ -12,9 +12,9 @@ import ActivityAuditPage from './pages/ActivityAuditPage';
 import UserManagementPage from './pages/UserManagementPage';
 import SettingsPage from './pages/SettingsPage';
 
-export default function App() {
+export const App: React.FC = () => {
   const { isAuthenticated } = useAuth();
-  const [activePage, setActivePage] = useState('pos'); // Default to POS for immediate cashier productivity
+  const [activePage, setActivePage] = useState<string>('pos'); // Default to POS for immediate cashier productivity
 
   if (!isAuthenticated) {
     return <LoginPage />;
@@ -50,4 +50,6 @@ export default function App() {
       {renderActivePage()}
     </MainLayout>
   );
-}
+};
+
+export default App;

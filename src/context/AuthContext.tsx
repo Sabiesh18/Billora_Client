@@ -1,10 +1,20 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authApi } from '../api/client';
+import { User } from '../types';
 
-const AuthContext = createContext(null);
+interface AuthContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  isAdmin: boolean;
+  loading: boolean;
+  login: (username: string, pass: string) => Promise<User>;
+  logout: () => Promise<void>;
+}
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(() => {
     try {
       const stored = localStorage.getItem('user');
       return stored ? JSON.parse(stored) : null;
@@ -22,11 +32,11 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener('auth-expired', handleExpired);
   }, []);
 
-  const login = async (username, password) => {
+  const login = async (username: string, pass: string): Promise<User> => {
     setLoading(true);
     try {
-      const data = await authApi.login({ username, password });
-      const userObj = {
+      const data = await authApi.login({ username, password: pass });
+      const userObj: User = {
         userId: data.userId,
         username: data.username,
         fullName: data.fullName,
@@ -41,7 +51,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     try {
       await authApi.logout();
     } catch (e) {
@@ -63,7 +73,7 @@ export function AuthProvider({ children }) {
   );
 }
 
-export function useAuth() {
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;

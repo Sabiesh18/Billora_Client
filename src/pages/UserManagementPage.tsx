@@ -1,28 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { userApi } from '../api/client';
 import { useToast } from '../context/ToastContext';
+import { User } from '../types';
 
-export default function UserManagementPage() {
+export const UserManagementPage: React.FC = () => {
   const { showToast } = useToast();
 
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [role, setRole] = useState('CASHIER');
-  const [submitting, setSubmitting] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [fullName, setFullName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
+  const [role, setRole] = useState<string>('CASHIER');
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
       const data = await userApi.fetchAll({ pageNumber: 1, pageSize: 50 });
       setUsers(data || []);
-    } catch (err) {
-      showToast('Error loading users: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Error loading users';
+      showToast('Error loading users: ' + errorMsg, 'error');
     } finally {
       setLoading(false);
     }
@@ -32,7 +34,7 @@ export default function UserManagementPage() {
     fetchUsers();
   }, []);
 
-  const handleCreateUser = async (e) => {
+  const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim() || !password.trim() || !fullName.trim()) {
       showToast('Username, password, and full name are required', 'warning');
@@ -45,8 +47,8 @@ export default function UserManagementPage() {
         username: username.trim(),
         password: password.trim(),
         fullName: fullName.trim(),
-        email: email.trim() || null,
-        phone: phone.trim() || null,
+        email: email.trim() || undefined,
+        phone: phone.trim() || undefined,
         role,
       });
 
@@ -58,8 +60,9 @@ export default function UserManagementPage() {
       setEmail('');
       setPhone('');
       fetchUsers();
-    } catch (err) {
-      showToast('Failed to create user: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to create user';
+      showToast('Failed to create user: ' + errorMsg, 'error');
     } finally {
       setSubmitting(false);
     }
@@ -76,7 +79,7 @@ export default function UserManagementPage() {
 
         <button
           onClick={() => setModalOpen(true)}
-          className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5"
+          className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5 transition-colors"
         >
           <span>+</span>
           <span>Add Staff Account</span>
@@ -101,13 +104,13 @@ export default function UserManagementPage() {
             <tbody className="divide-y divide-slate-800/60 text-slate-200">
               {loading ? (
                 <tr>
-                  <td colSpan="7" className="p-8 text-center text-slate-500">
+                  <td colSpan={7} className="p-8 text-center text-slate-500">
                     Loading user accounts...
                   </td>
                 </tr>
               ) : users.length > 0 ? (
                 users.map((u) => (
-                  <tr key={u.userId} className="hover:bg-slate-800/40">
+                  <tr key={u.userId} className="hover:bg-slate-800/40 transition-colors">
                     <td className="p-3.5 font-bold font-mono text-amber-400">
                       @{u.username}
                     </td>
@@ -133,13 +136,13 @@ export default function UserManagementPage() {
                       </span>
                     </td>
                     <td className="p-3.5 text-slate-500 font-mono text-[11px]">
-                      {new Date(u.createdAt).toLocaleDateString('en-IN')}
+                      {u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN') : 'N/A'}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="p-8 text-center text-slate-500">
+                  <td colSpan={7} className="p-8 text-center text-slate-500">
                     No users found.
                   </td>
                 </tr>
@@ -250,14 +253,14 @@ export default function UserManagementPage() {
                   type="button"
                   onClick={() => setModalOpen(false)}
                   disabled={submitting}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold"
+                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold"
+                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition-colors"
                 >
                   {submitting ? 'Creating...' : 'Create Account'}
                 </button>
@@ -268,4 +271,6 @@ export default function UserManagementPage() {
       )}
     </div>
   );
-}
+};
+
+export default UserManagementPage;

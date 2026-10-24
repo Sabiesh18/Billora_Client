@@ -3,22 +3,23 @@ import { billApi } from '../api/client';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
 import ThermalReceiptModal from '../components/billing/ThermalReceiptModal';
+import { Bill } from '../types';
 
-export default function OrdersHistoryPage() {
+export const OrdersHistoryPage: React.FC = () => {
   const { settings } = useSettings();
   const { showToast } = useToast();
 
-  const [bills, setBills] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState('');
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
+  const [bills, setBills] = useState<Bill[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [search, setSearch] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
 
   // Modals
-  const [selectedBillForReceipt, setSelectedBillForReceipt] = useState(null);
-  const [cancelModalBill, setCancelModalBill] = useState(null);
-  const [cancellationReason, setCancellationReason] = useState('');
-  const [actionLoading, setActionLoading] = useState(false);
+  const [selectedBillForReceipt, setSelectedBillForReceipt] = useState<Bill | null>(null);
+  const [cancelModalBill, setCancelModalBill] = useState<Bill | null>(null);
+  const [cancellationReason, setCancellationReason] = useState<string>('');
+  const [actionLoading, setActionLoading] = useState<boolean>(false);
 
   const fetchBills = async () => {
     setLoading(true);
@@ -30,8 +31,9 @@ export default function OrdersHistoryPage() {
         search: search.trim() || undefined,
       });
       setBills(data || []);
-    } catch (err) {
-      showToast('Error loading bills: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Error loading bills';
+      showToast('Error loading bills: ' + errorMsg, 'error');
     } finally {
       setLoading(false);
     }
@@ -41,23 +43,25 @@ export default function OrdersHistoryPage() {
     fetchBills();
   }, [page, statusFilter]);
 
-  const handleSearchSubmit = (e) => {
+  const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setPage(1);
     fetchBills();
   };
 
-  const handleOpenReceipt = async (billId) => {
+  const handleOpenReceipt = async (billId: string) => {
     try {
       const details = await billApi.getDetails(billId);
       setSelectedBillForReceipt(details);
-    } catch (err) {
-      showToast('Could not retrieve bill details: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Could not retrieve bill';
+      showToast('Could not retrieve bill details: ' + errorMsg, 'error');
     }
   };
 
-  const handleConfirmCancel = async (e) => {
+  const handleConfirmCancel = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!cancelModalBill) return;
     if (!cancellationReason.trim()) {
       showToast('Please provide a valid cancellation reason', 'warning');
       return;
@@ -70,8 +74,9 @@ export default function OrdersHistoryPage() {
       setCancelModalBill(null);
       setCancellationReason('');
       fetchBills();
-    } catch (err) {
-      showToast('Failed to cancel bill: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to cancel bill';
+      showToast('Failed to cancel bill: ' + errorMsg, 'error');
     } finally {
       setActionLoading(false);
     }
@@ -91,7 +96,7 @@ export default function OrdersHistoryPage() {
           />
           <button
             type="submit"
-            className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3 py-2 rounded-lg"
+            className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3 py-2 rounded-lg transition-colors"
           >
             Search
           </button>
@@ -114,7 +119,7 @@ export default function OrdersHistoryPage() {
 
           <button
             onClick={fetchBills}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-700"
+            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-700 transition-colors"
           >
             Refresh 🔄
           </button>
@@ -140,78 +145,81 @@ export default function OrdersHistoryPage() {
             <tbody className="divide-y divide-slate-800/60 text-slate-200">
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="p-8 text-center text-slate-500">
+                  <td colSpan={8} className="p-8 text-center text-slate-500">
                     Loading invoices...
                   </td>
                 </tr>
               ) : bills.length > 0 ? (
-                bills.map((bill) => (
-                  <tr key={bill.billId} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="p-3.5 font-bold text-amber-400 font-mono">
-                      {bill.billNumber}
-                    </td>
-                    <td className="p-3.5 text-slate-400">
-                      {new Date(bill.createdAt).toLocaleDateString('en-IN')}{' '}
-                      <span className="text-[10px]">
-                        {new Date(bill.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </td>
-                    <td className="p-3.5">
-                      <span className="font-medium text-slate-300">{bill.orderType}</span>
-                      {bill.tableNumber && bill.tableNumber !== 'N/A' && (
-                        <span className="ml-1.5 text-[10px] bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 border border-slate-700">
-                          {bill.tableNumber}
+                bills.map((bill) => {
+                  const billStatus = bill.billStatus || bill.status || 'ACTIVE';
+                  return (
+                    <tr key={bill.billId} className="hover:bg-slate-800/40 transition-colors">
+                      <td className="p-3.5 font-bold text-amber-400 font-mono">
+                        {bill.billNumber}
+                      </td>
+                      <td className="p-3.5 text-slate-400">
+                        {bill.createdAt ? new Date(bill.createdAt).toLocaleDateString('en-IN') : 'N/A'}{' '}
+                        <span className="text-[10px]">
+                          {bill.createdAt ? new Date(bill.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : ''}
                         </span>
-                      )}
-                    </td>
-                    <td className="p-3.5 text-slate-300">
-                      {bill.customerName || 'Walk-in Guest'}
-                    </td>
-                    <td className="p-3.5 text-right font-bold text-slate-100">
-                      {settings.currency_symbol} {Number(bill.grandTotal).toFixed(2)}
-                    </td>
-                    <td className="p-3.5 text-center">
-                      <span className="font-mono text-[10px] uppercase px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                        {bill.paymentMode}
-                      </span>
-                    </td>
-                    <td className="p-3.5 text-center">
-                      <span
-                        className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                          bill.billStatus === 'SETTLED'
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                            : bill.billStatus === 'ACTIVE'
-                            ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                            : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
-                        }`}
-                      >
-                        {bill.billStatus}
-                      </span>
-                    </td>
-                    <td className="p-3.5 text-right space-x-1.5">
-                      <button
-                        onClick={() => handleOpenReceipt(bill.billId)}
-                        className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 font-semibold"
-                        title="Reprint Thermal Receipt"
-                      >
-                        🖨️ Receipt
-                      </button>
-
-                      {bill.billStatus === 'ACTIVE' && (
-                        <button
-                          onClick={() => setCancelModalBill(bill)}
-                          className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white rounded border border-rose-500/30 font-semibold transition-colors"
-                          title="Cancel Bill"
+                      </td>
+                      <td className="p-3.5">
+                        <span className="font-medium text-slate-300">{bill.orderType}</span>
+                        {bill.tableNumber && bill.tableNumber !== 'N/A' && (
+                          <span className="ml-1.5 text-[10px] bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 border border-slate-700">
+                            {bill.tableNumber}
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-3.5 text-slate-300">
+                        {bill.customerName || 'Walk-in Guest'}
+                      </td>
+                      <td className="p-3.5 text-right font-bold text-slate-100">
+                        {settings.currency_symbol || '₹'} {Number(bill.grandTotal).toFixed(2)}
+                      </td>
+                      <td className="p-3.5 text-center">
+                        <span className="font-mono text-[10px] uppercase px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                          {bill.paymentMode || 'PENDING'}
+                        </span>
+                      </td>
+                      <td className="p-3.5 text-center">
+                        <span
+                          className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                            billStatus === 'SETTLED' || billStatus === 'PAID'
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                              : billStatus === 'ACTIVE'
+                              ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
+                              : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                          }`}
                         >
-                          Cancel
+                          {billStatus}
+                        </span>
+                      </td>
+                      <td className="p-3.5 text-right space-x-1.5">
+                        <button
+                          onClick={() => handleOpenReceipt(bill.billId)}
+                          className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 font-semibold transition-colors"
+                          title="Reprint Thermal Receipt"
+                        >
+                          🖨️ Receipt
                         </button>
-                      )}
-                    </td>
-                  </tr>
-                ))
+
+                        {billStatus === 'ACTIVE' && (
+                          <button
+                            onClick={() => setCancelModalBill(bill)}
+                            className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white rounded border border-rose-500/30 font-semibold transition-colors"
+                            title="Cancel Bill"
+                          >
+                            Cancel
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
-                  <td colSpan="8" className="p-8 text-center text-slate-500">
+                  <td colSpan={8} className="p-8 text-center text-slate-500">
                     No transactions found matching criteria.
                   </td>
                 </tr>
@@ -239,7 +247,7 @@ export default function OrdersHistoryPage() {
                 </label>
                 <textarea
                   required
-                  rows="3"
+                  rows={3}
                   value={cancellationReason}
                   onChange={(e) => setCancellationReason(e.target.value)}
                   placeholder="e.g. Customer cancelled order, wrong table punched, punch error"
@@ -252,14 +260,14 @@ export default function OrdersHistoryPage() {
                   type="button"
                   onClick={() => setCancelModalBill(null)}
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold"
+                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-colors"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold shadow-lg"
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold shadow-lg transition-colors"
                 >
                   {actionLoading ? 'Cancelling...' : 'Confirm Cancellation'}
                 </button>
@@ -278,4 +286,6 @@ export default function OrdersHistoryPage() {
       )}
     </div>
   );
-}
+};
+
+export default OrdersHistoryPage;

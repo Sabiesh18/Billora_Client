@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useSettings } from '../context/SettingsContext';
 
-export default function LoginPage() {
+export const LoginPage: React.FC = () => {
   const { login, loading } = useAuth();
   const { showToast } = useToast();
   const { settings } = useSettings();
@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('password123');
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim() || !password.trim()) {
       showToast('Please enter both username and password', 'error');
@@ -22,21 +22,22 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await login(username, password);
-      showToast('Login successful! Welcome to ' + settings.restaurant_name, 'success');
-    } catch (err) {
-      showToast(err.message || 'Invalid username or password', 'error');
+      showToast('Login successful! Welcome to ' + (settings.restaurant_name || 'Billora POS'), 'success');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Invalid username or password';
+      showToast(errorMsg, 'error');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const setDemoCredentials = (user, pass) => {
+  const setDemoCredentials = (user: string, pass: string) => {
     setUsername(user);
     setPassword(pass);
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4">
+    <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 select-none">
       <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8 backdrop-blur-sm">
         {/* Logo and Restaurant Title */}
         <div className="text-center mb-8">
@@ -44,7 +45,7 @@ export default function LoginPage() {
             🍽️
           </div>
           <h1 className="text-xl font-bold text-slate-100 tracking-tight">
-            {settings.restaurant_name}
+            {settings.restaurant_name || 'Billora POS'}
           </h1>
           <p className="text-xs text-slate-400 mt-1">
             Professional Offline Restaurant & Hotel Billing System
@@ -106,21 +107,21 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setDemoCredentials('admin', 'password123')}
-              className="text-xs bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 px-2.5 py-1.5 rounded-md transition-colors"
+              className="text-xs bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 px-2.5 py-1.5 rounded-md transition-colors font-medium"
             >
               Admin
             </button>
             <button
               type="button"
               onClick={() => setDemoCredentials('cashier', 'password123')}
-              className="text-xs bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 px-2.5 py-1.5 rounded-md transition-colors"
+              className="text-xs bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 px-2.5 py-1.5 rounded-md transition-colors font-medium"
             >
               Cashier
             </button>
             <button
               type="button"
               onClick={() => setDemoCredentials('manager', 'password123')}
-              className="text-xs bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 px-2.5 py-1.5 rounded-md transition-colors"
+              className="text-xs bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 px-2.5 py-1.5 rounded-md transition-colors font-medium"
             >
               Manager
             </button>
@@ -132,4 +133,6 @@ export default function LoginPage() {
       </div>
     </div>
   );
-}
+};
+
+export default LoginPage;

@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { reportApi } from '../api/client';
 import { useSettings } from '../context/SettingsContext';
+import { DashboardMetrics } from '../types';
 
-export default function DashboardPage({ setActivePage }) {
+interface DashboardPageProps {
+  setActivePage: (page: string) => void;
+}
+
+export const DashboardPage: React.FC<DashboardPageProps> = ({ setActivePage }) => {
   const { settings } = useSettings();
-  const [metrics, setMetrics] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchMetrics = async () => {
     setLoading(true);
@@ -53,7 +58,7 @@ export default function DashboardPage({ setActivePage }) {
             title="Refresh Metrics"
             className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3 py-2.5 rounded-lg border border-slate-700 transition-colors"
           >
-            🔄
+            {loading ? '⏳' : '🔄'}
           </button>
         </div>
       </div>
@@ -68,7 +73,7 @@ export default function DashboardPage({ setActivePage }) {
           </div>
           <div className="mt-3">
             <h3 className="text-2xl font-bold text-slate-100">
-              {settings.currency_symbol} {Number(metrics?.todaySales || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+              {settings.currency_symbol || '₹'} {Number(metrics?.todaySales || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
             </h3>
             <p className="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
               <span>●</span> Settled bills today
@@ -123,7 +128,7 @@ export default function DashboardPage({ setActivePage }) {
 
       {/* Two-column insights: Top Selling Items and Payment Method Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top 5 Selling Dishes Today */}
+        {/* Top Selling Dishes Today */}
         <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
@@ -146,7 +151,7 @@ export default function DashboardPage({ setActivePage }) {
                     </div>
                   </div>
                   <span className="text-sm font-bold text-amber-400">
-                    {settings.currency_symbol} {Number(item.totalRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    {settings.currency_symbol || '₹'} {Number(item.totalRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
               ))}
@@ -181,7 +186,7 @@ export default function DashboardPage({ setActivePage }) {
                     </div>
                   </div>
                   <span className="text-sm font-bold text-emerald-400">
-                    {settings.currency_symbol} {Number(pm.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    {settings.currency_symbol || '₹'} {Number(pm.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
               ))}
@@ -195,4 +200,6 @@ export default function DashboardPage({ setActivePage }) {
       </div>
     </div>
   );
-}
+};
+
+export default DashboardPage;

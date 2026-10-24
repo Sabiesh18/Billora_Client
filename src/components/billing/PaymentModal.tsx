@@ -1,26 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, FormEvent } from 'react';
 import { useSettings } from '../../context/SettingsContext';
+import { Bill, BillSettlePayload } from '../../types';
 
-export default function PaymentModal({ bill, onSettle, onClose, loading }) {
+interface PaymentModalProps {
+  bill: Bill;
+  onSettle: (payload: BillSettlePayload) => Promise<void>;
+  onClose: () => void;
+  loading: boolean;
+}
+
+export default function PaymentModal({ bill, onSettle, onClose, loading }: PaymentModalProps) {
   const { settings } = useSettings();
-  const [paymentMode, setPaymentMode] = useState('CASH');
-  const [amountPaid, setAmountPaid] = useState(bill.grandTotal);
-  const [notes, setNotes] = useState('');
+  const [paymentMode, setPaymentMode] = useState<string>('CASH');
+  const [amountPaid, setAmountPaid] = useState<number | string>(bill.grandTotal);
+  const [notes, setNotes] = useState<string>('');
 
   const grandTotal = Number(bill.grandTotal || 0);
   const paid = Number(amountPaid || 0);
   const changeDue = Math.max(0, paid - grandTotal);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (paid < grandTotal) {
-      alert(`Amount paid cannot be less than Grand Total (${settings.currency_symbol} ${grandTotal})`);
+      alert(`Amount paid cannot be less than Grand Total (${settings.currency_symbol} ${grandTotal.toFixed(2)})`);
       return;
     }
     onSettle({ paymentMode, amountPaid: paid, notes });
   };
 
-  const setQuickAmount = (val) => {
+  const setQuickAmount = (val: number) => {
     setAmountPaid(val);
   };
 
@@ -96,7 +104,7 @@ export default function PaymentModal({ bill, onSettle, onClose, loading }) {
                 onClick={() => setQuickAmount(grandTotal)}
                 className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded border border-slate-700"
               >
-                Exact ({settings.currency_symbol}{grandTotal})
+                Exact ({settings.currency_symbol}{grandTotal.toFixed(0)})
               </button>
               <button
                 type="button"

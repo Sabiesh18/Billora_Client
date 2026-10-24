@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { activityApi } from '../api/client';
 import { useToast } from '../context/ToastContext';
+import { ActivityLog } from '../types';
 
-export default function ActivityAuditPage() {
+export const ActivityAuditPage: React.FC = () => {
   const { showToast } = useToast();
-  const [logs, setLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [moduleFilter, setModuleFilter] = useState('');
-  const [page, setPage] = useState(1);
-  const [inspectLog, setInspectLog] = useState(null);
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [moduleFilter, setModuleFilter] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
+  const [inspectLog, setInspectLog] = useState<ActivityLog | null>(null);
 
   const fetchLogs = async () => {
     setLoading(true);
@@ -19,8 +20,9 @@ export default function ActivityAuditPage() {
         module: moduleFilter || undefined,
       });
       setLogs(data || []);
-    } catch (err) {
-      showToast('Error loading audit history: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Error loading audit history';
+      showToast('Error loading audit history: ' + errorMsg, 'error');
     } finally {
       setLoading(false);
     }
@@ -63,7 +65,7 @@ export default function ActivityAuditPage() {
 
           <button
             onClick={fetchLogs}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-700"
+            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-700 transition-colors"
           >
             Refresh 🔄
           </button>
@@ -88,18 +90,17 @@ export default function ActivityAuditPage() {
             <tbody className="divide-y divide-slate-800/60 text-slate-200">
               {loading ? (
                 <tr>
-                  <td colSpan="7" className="p-8 text-center text-slate-500">
+                  <td colSpan={7} className="p-8 text-center text-slate-500">
                     Loading security audit logs...
                   </td>
                 </tr>
               ) : logs.length > 0 ? (
                 logs.map((log) => {
-                  const isAuth = log.module === 'AUTH';
                   const isBilling = log.module === 'BILLING';
                   const isFailed = log.activityType.includes('FAIL');
 
                   return (
-                    <tr key={log.activityId} className="hover:bg-slate-800/40">
+                    <tr key={log.activityId} className="hover:bg-slate-800/40 transition-colors">
                       <td className="p-3.5 text-slate-400 font-mono whitespace-nowrap">
                         {new Date(log.createdAt).toLocaleDateString('en-IN')}{' '}
                         <span className="text-[10px]">
@@ -137,7 +138,7 @@ export default function ActivityAuditPage() {
                         {(log.oldValue || log.newValue) && (
                           <button
                             onClick={() => setInspectLog(log)}
-                            className="px-2 py-1 text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700"
+                            className="px-2 py-1 text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition-colors"
                           >
                             Inspect JSON
                           </button>
@@ -148,7 +149,7 @@ export default function ActivityAuditPage() {
                 })
               ) : (
                 <tr>
-                  <td colSpan="7" className="p-8 text-center text-slate-500">
+                  <td colSpan={7} className="p-8 text-center text-slate-500">
                     No activity logs recorded.
                   </td>
                 </tr>
@@ -181,7 +182,9 @@ export default function ActivityAuditPage() {
                     Previous State (Before)
                   </span>
                   <pre className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono text-slate-300 overflow-x-auto max-h-48">
-                    {JSON.stringify(inspectLog.oldValue, null, 2)}
+                    {typeof inspectLog.oldValue === 'string'
+                      ? inspectLog.oldValue
+                      : JSON.stringify(inspectLog.oldValue, null, 2)}
                   </pre>
                 </div>
               )}
@@ -192,7 +195,9 @@ export default function ActivityAuditPage() {
                     Updated State (After)
                   </span>
                   <pre className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono text-slate-300 overflow-x-auto max-h-48">
-                    {JSON.stringify(inspectLog.newValue, null, 2)}
+                    {typeof inspectLog.newValue === 'string'
+                      ? inspectLog.newValue
+                      : JSON.stringify(inspectLog.newValue, null, 2)}
                   </pre>
                 </div>
               )}
@@ -201,7 +206,7 @@ export default function ActivityAuditPage() {
             <div className="flex justify-end pt-4 mt-2 border-t border-slate-800">
               <button
                 onClick={() => setInspectLog(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg transition-colors"
               >
                 Close
               </button>
@@ -211,4 +216,6 @@ export default function ActivityAuditPage() {
       )}
     </div>
   );
-}
+};
+
+export default ActivityAuditPage;

@@ -25,30 +25,44 @@
 }
 
 /* =============================================================================
-   THERMAL RECEIPT PRINTING STYLES (80mm / 58mm Thermal POS Printers)
+   THERMAL RECEIPT PRINTING STYLES (Supports Both 80mm and 58mm POS Printers)
    ============================================================================= */
 @media print {
   body * {
     visibility: hidden;
   }
+
+  /* Universal thermal print container */
   #thermal-receipt-print-area, #thermal-receipt-print-area * {
     visibility: visible;
   }
+
   #thermal-receipt-print-area {
     position: absolute;
     left: 0;
     top: 0;
-    width: 80mm;
     margin: 0;
-    padding: 4mm;
-    background: white !important;
-    color: black !important;
+    padding: 3mm 2mm;
+    background: #ffffff !important;
+    color: #000000 !important;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 11px;
     line-height: 1.25;
   }
+
+  /* 80mm Standard POS Printer format */
+  #thermal-receipt-print-area.format-80mm {
+    width: 80mm;
+    font-size: 11px;
+  }
+
+  /* 58mm Compact POS Printer format */
+  #thermal-receipt-print-area.format-58mm {
+    width: 58mm;
+    font-size: 9.5px;
+    padding: 2mm 1mm;
+  }
+
   @page {
-    size: 80mm auto;
     margin: 0;
   }
 }

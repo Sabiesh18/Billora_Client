@@ -2,32 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { categoryApi, menuApi } from '../api/client';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
+import { Category, MenuItem } from '../types';
 
-export default function MenuManagementPage() {
+export const MenuManagementPage: React.FC = () => {
   const { settings } = useSettings();
   const { showToast } = useToast();
 
-  const [categories, setCategories] = useState([]);
-  const [menuItems, setMenuItems] = useState([]);
-  const [selectedCat, setSelectedCat] = useState('ALL');
-  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [selectedCat, setSelectedCat] = useState<string>('ALL');
+  const [loading, setLoading] = useState<boolean>(true);
 
   // Category Modal
-  const [catModalOpen, setCatModalOpen] = useState(false);
-  const [newCatName, setNewCatName] = useState('');
-  const [newCatDesc, setNewCatDesc] = useState('');
+  const [catModalOpen, setCatModalOpen] = useState<boolean>(false);
+  const [newCatName, setNewCatName] = useState<string>('');
+  const [newCatDesc, setNewCatDesc] = useState<string>('');
 
   // Item Modal
-  const [itemModalOpen, setItemModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
-  const [itemCategoryId, setItemCategoryId] = useState('');
-  const [itemCode, setItemCode] = useState('');
-  const [itemName, setItemName] = useState('');
-  const [itemDesc, setItemDesc] = useState('');
-  const [itemPrice, setItemPrice] = useState('');
-  const [itemFoodType, setItemFoodType] = useState('VEG');
-  const [itemTaxRate, setItemTaxRate] = useState('5.00');
-  const [submitting, setSubmitting] = useState(false);
+  const [itemModalOpen, setItemModalOpen] = useState<boolean>(false);
+  const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
+  const [itemCategoryId, setItemCategoryId] = useState<string>('');
+  const [itemCode, setItemCode] = useState<string>('');
+  const [itemName, setItemName] = useState<string>('');
+  const [itemDesc, setItemDesc] = useState<string>('');
+  const [itemPrice, setItemPrice] = useState<string | number>('');
+  const [itemFoodType, setItemFoodType] = useState<string>('VEG');
+  const [itemTaxRate, setItemTaxRate] = useState<string | number>('5.00');
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -41,8 +42,9 @@ export default function MenuManagementPage() {
       if (cats && cats.length > 0 && !itemCategoryId) {
         setItemCategoryId(cats[0].categoryId);
       }
-    } catch (err) {
-      showToast('Error loading menu: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Error loading menu';
+      showToast('Error loading menu: ' + errorMsg, 'error');
     } finally {
       setLoading(false);
     }
@@ -52,7 +54,7 @@ export default function MenuManagementPage() {
     fetchData();
   }, []);
 
-  const handleCreateCategory = async (e) => {
+  const handleCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCatName.trim()) return;
 
@@ -67,12 +69,13 @@ export default function MenuManagementPage() {
       setNewCatName('');
       setNewCatDesc('');
       fetchData();
-    } catch (err) {
-      showToast('Failed to create category: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to create category';
+      showToast('Failed to create category: ' + errorMsg, 'error');
     }
   };
 
-  const handleSaveItem = async (e) => {
+  const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!itemName.trim() || !itemPrice) {
       showToast('Item name and price are required', 'warning');
@@ -83,9 +86,9 @@ export default function MenuManagementPage() {
     try {
       const payload = {
         categoryId: itemCategoryId,
-        itemCode: itemCode.trim() || null,
+        itemCode: itemCode.trim() || undefined,
         itemName: itemName.trim(),
-        description: itemDesc.trim() || null,
+        description: itemDesc.trim() || undefined,
         price: Number(itemPrice),
         foodType: itemFoodType,
         taxRate: Number(itemTaxRate) || 5,
@@ -103,14 +106,15 @@ export default function MenuManagementPage() {
       setItemModalOpen(false);
       resetItemForm();
       fetchData();
-    } catch (err) {
-      showToast('Failed to save menu item: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to save menu item';
+      showToast('Failed to save menu item: ' + errorMsg, 'error');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const openEditItem = (item) => {
+  const openEditItem = (item: MenuItem) => {
     setEditingItem(item);
     setItemCategoryId(item.categoryId);
     setItemCode(item.itemCode || '');
@@ -132,7 +136,7 @@ export default function MenuManagementPage() {
     setItemTaxRate('5.00');
   };
 
-  const handleToggleAvailability = async (item) => {
+  const handleToggleAvailability = async (item: MenuItem) => {
     try {
       await menuApi.update(item.itemId, {
         ...item,
@@ -140,8 +144,9 @@ export default function MenuManagementPage() {
       });
       showToast(`${item.itemName} marked as ${!item.isAvailable ? 'Available' : 'Unavailable'}`, 'info');
       fetchData();
-    } catch (err) {
-      showToast('Toggle failed: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Toggle failed';
+      showToast('Toggle failed: ' + errorMsg, 'error');
     }
   };
 
@@ -161,7 +166,7 @@ export default function MenuManagementPage() {
         <div className="flex gap-2">
           <button
             onClick={() => setCatModalOpen(true)}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-700"
+            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-700 transition-colors"
           >
             + Add Category
           </button>
@@ -170,7 +175,7 @@ export default function MenuManagementPage() {
               resetItemForm();
               setItemModalOpen(true);
             }}
-            className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-lg shadow"
+            className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-lg shadow transition-colors"
           >
             + Add Menu Item
           </button>
@@ -181,7 +186,7 @@ export default function MenuManagementPage() {
       <div className="flex gap-2 overflow-x-auto pb-1">
         <button
           onClick={() => setSelectedCat('ALL')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
             selectedCat === 'ALL'
               ? 'bg-amber-500 text-slate-950 font-bold'
               : 'bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800'
@@ -193,7 +198,7 @@ export default function MenuManagementPage() {
           <button
             key={c.categoryId}
             onClick={() => setSelectedCat(c.categoryId)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
               selectedCat === c.categoryId
                 ? 'bg-amber-500 text-slate-950 font-bold'
                 : 'bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800'
@@ -221,57 +226,71 @@ export default function MenuManagementPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-slate-200">
-              {filteredItems.map((item) => (
-                <tr key={item.itemId} className="hover:bg-slate-800/40">
-                  <td className="p-3.5 font-mono text-slate-400 font-bold">
-                    {item.itemCode || '---'}
-                  </td>
-                  <td className="p-3.5 font-bold text-slate-100">
-                    {item.itemName}
-                    {item.description && (
-                      <p className="text-[10px] text-slate-400 font-normal mt-0.5 line-clamp-1">{item.description}</p>
-                    )}
-                  </td>
-                  <td className="p-3.5 text-slate-400">{item.categoryName}</td>
-                  <td className="p-3.5">
-                    <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                        item.foodType === 'VEG'
-                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                          : item.foodType === 'NON_VEG'
-                          ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
-                          : 'bg-blue-500/10 text-blue-400 border border-blue-500/30'
-                      }`}
-                    >
-                      {item.foodType}
-                    </span>
-                  </td>
-                  <td className="p-3.5 text-right font-black text-amber-400">
-                    {settings.currency_symbol} {Number(item.price).toFixed(2)}
-                  </td>
-                  <td className="p-3.5 text-center text-slate-400">{item.taxRate}%</td>
-                  <td className="p-3.5 text-center">
-                    <button
-                      onClick={() => handleToggleAvailability(item)}
-                      className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider transition-colors ${
-                        item.isAvailable
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                          : 'bg-slate-800 text-slate-400 border border-slate-700'
-                      }`}
-                    >
-                      {item.isAvailable ? 'In Stock' : 'Out of Stock'}
-                    </button>
-                  </td>
-                  <td className="p-3.5 text-right">
-                    <button
-                      onClick={() => openEditItem(item)}
-                      className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 font-medium"
-                    >
-                      Edit
-                    </button>
+              {loading ? (
+                <tr>
+                  <td colSpan={8} className="p-8 text-center text-slate-500">
+                    Loading menu items...
                   </td>
                 </tr>
-              ))}
+              ) : filteredItems.length > 0 ? (
+                filteredItems.map((item) => (
+                  <tr key={item.itemId} className="hover:bg-slate-800/40 transition-colors">
+                    <td className="p-3.5 font-mono text-slate-400 font-bold">
+                      {item.itemCode || '---'}
+                    </td>
+                    <td className="p-3.5 font-bold text-slate-100">
+                      {item.itemName}
+                      {item.description && (
+                        <p className="text-[10px] text-slate-400 font-normal mt-0.5 line-clamp-1">{item.description}</p>
+                      )}
+                    </td>
+                    <td className="p-3.5 text-slate-400">{item.categoryName}</td>
+                    <td className="p-3.5">
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                          item.foodType === 'VEG'
+                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                            : item.foodType === 'NON_VEG'
+                            ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                            : 'bg-blue-500/10 text-blue-400 border border-blue-500/30'
+                        }`}
+                      >
+                        {item.foodType}
+                      </span>
+                    </td>
+                    <td className="p-3.5 text-right font-black text-amber-400">
+                      {settings.currency_symbol || '₹'} {Number(item.price).toFixed(2)}
+                    </td>
+                    <td className="p-3.5 text-center text-slate-400">{item.taxRate}%</td>
+                    <td className="p-3.5 text-center">
+                      <button
+                        onClick={() => handleToggleAvailability(item)}
+                        className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider transition-colors ${
+                          item.isAvailable
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                            : 'bg-slate-800 text-slate-400 border border-slate-700'
+                        }`}
+                      >
+                        {item.isAvailable ? 'In Stock' : 'Out of Stock'}
+                      </button>
+                    </td>
+                    <td className="p-3.5 text-right">
+                      <button
+                        onClick={() => openEditItem(item)}
+                        className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 font-medium transition-colors"
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={8} className="p-8 text-center text-slate-500">
+                    No menu items in this category.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -335,7 +354,7 @@ export default function MenuManagementPage() {
               <div className="grid grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
-                    Price ({settings.currency_symbol})
+                    Price ({settings.currency_symbol || '₹'})
                   </label>
                   <input
                     type="number"
@@ -383,7 +402,7 @@ export default function MenuManagementPage() {
                   Description / Ingredients
                 </label>
                 <textarea
-                  rows="2"
+                  rows={2}
                   value={itemDesc}
                   onChange={(e) => setItemDesc(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
@@ -395,14 +414,14 @@ export default function MenuManagementPage() {
                   type="button"
                   onClick={() => setItemModalOpen(false)}
                   disabled={submitting}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold"
+                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold"
+                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition-colors"
                 >
                   {submitting ? 'Saving...' : 'Save Item'}
                 </button>
@@ -439,7 +458,7 @@ export default function MenuManagementPage() {
                   Description
                 </label>
                 <textarea
-                  rows="2"
+                  rows={2}
                   value={newCatDesc}
                   onChange={(e) => setNewCatDesc(e.target.value)}
                   placeholder="Optional notes"
@@ -451,13 +470,13 @@ export default function MenuManagementPage() {
                 <button
                   type="button"
                   onClick={() => setCatModalOpen(false)}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold"
+                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold"
+                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition-colors"
                 >
                   Save Category
                 </button>
@@ -468,4 +487,6 @@ export default function MenuManagementPage() {
       )}
     </div>
   );
-}
+};
+
+export default MenuManagementPage;

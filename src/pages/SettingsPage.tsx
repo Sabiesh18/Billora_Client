@@ -2,26 +2,40 @@ import React, { useState } from 'react';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
 
-export default function SettingsPage() {
+export const SettingsPage: React.FC = () => {
   const { settings, updateSettings } = useSettings();
   const { showToast } = useToast();
 
-  const [formData, setFormData] = useState({ ...settings });
-  const [saving, setSaving] = useState(false);
+  const [formData, setFormData] = useState<Record<string, string>>({
+    restaurant_name: settings.restaurant_name || '',
+    restaurant_tagline: settings.restaurant_tagline || '',
+    restaurant_address: settings.restaurant_address || '',
+    restaurant_phone: settings.restaurant_phone || '',
+    restaurant_email: settings.restaurant_email || '',
+    restaurant_gstin: settings.restaurant_gstin || '',
+    fssai_license: settings.fssai_license || '',
+    currency_symbol: settings.currency_symbol || '₹',
+    currency_code: settings.currency_code || 'INR',
+    default_tax_rate: settings.default_tax_rate || '5.00',
+    thermal_printer_width: settings.thermal_printer_width || '80mm',
+    receipt_footer: settings.receipt_footer || 'Thank You! Visit Again!',
+  });
+  const [saving, setSaving] = useState<boolean>(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = async (e) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
       await updateSettings(formData);
       showToast('Business settings saved successfully!', 'success');
-    } catch (err) {
-      showToast('Failed to save settings: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to save settings';
+      showToast('Failed to save settings: ' + errorMsg, 'error');
     } finally {
       setSaving(false);
     }
@@ -32,7 +46,9 @@ export default function SettingsPage() {
       <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center justify-between">
         <div>
           <h2 className="text-base font-bold text-slate-100">Restaurant & Billing Preferences</h2>
-          <p className="text-xs text-slate-400">Configure business information, GSTIN, receipt formatting, and offline defaults</p>
+          <p className="text-xs text-slate-400">
+            Configure business information, GSTIN, thermal printer widths (58mm/80mm), and offline defaults
+          </p>
         </div>
       </div>
 
@@ -111,10 +127,10 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Section 2: Taxation & Licenses */}
+        {/* Section 2: Taxation, Currency & Thermal Printer */}
         <div>
           <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">
-            2. Taxation, Licenses & Currency
+            2. Taxation, Currency & Thermal Printer Settings
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -173,16 +189,16 @@ export default function SettingsPage() {
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                Thermal Paper Width
+                Default Thermal Printer Format
               </label>
               <select
-                name="receipt_paper_width"
-                value={formData.receipt_paper_width || '80mm'}
+                name="thermal_printer_width"
+                value={formData.thermal_printer_width || '80mm'}
                 onChange={handleChange}
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
               >
-                <option value="80mm">80mm (Standard POS Thermal)</option>
-                <option value="58mm">58mm (Compact Mobile POS)</option>
+                <option value="80mm">80mm (Standard POS Thermal Roll)</option>
+                <option value="58mm">58mm (Compact Mobile POS Thermal Roll)</option>
               </select>
             </div>
           </div>
@@ -212,7 +228,7 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={saving}
-            className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-6 py-2.5 rounded-lg shadow-lg flex items-center gap-2"
+            className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-6 py-2.5 rounded-lg shadow-lg flex items-center gap-2 transition-colors disabled:opacity-50"
           >
             {saving ? 'Saving Changes...' : 'Save Configuration'}
           </button>
@@ -220,4 +236,6 @@ export default function SettingsPage() {
       </form>
     </div>
   );
-}
+};
+
+export default SettingsPage;

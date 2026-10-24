@@ -5,35 +5,36 @@ import { useToast } from '../context/ToastContext';
 import PaymentModal from '../components/billing/PaymentModal';
 import ThermalReceiptModal from '../components/billing/ThermalReceiptModal';
 import KOTModal from '../components/billing/KOTModal';
+import { Category, MenuItem, Table, Bill, CartItem } from '../types';
 
-export default function BillingPage() {
+export const BillingPage: React.FC = () => {
   const { settings } = useSettings();
   const { showToast } = useToast();
 
   // State
-  const [categories, setCategories] = useState([]);
-  const [menuItems, setMenuItems] = useState([]);
-  const [tables, setTables] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('ALL');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [tables, setTables] = useState<Table[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
 
   // Bill & Cart State
-  const [cart, setCart] = useState([]);
-  const [orderType, setOrderType] = useState('DINE_IN');
-  const [selectedTableId, setSelectedTableId] = useState('');
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [discountType, setDiscountType] = useState('NONE');
-  const [discountValue, setDiscountValue] = useState(0);
-  const [notes, setNotes] = useState('');
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [orderType, setOrderType] = useState<string>('DINE_IN');
+  const [selectedTableId, setSelectedTableId] = useState<string>('');
+  const [customerName, setCustomerName] = useState<string>('');
+  const [customerPhone, setCustomerPhone] = useState<string>('');
+  const [discountType, setDiscountType] = useState<'NONE' | 'PERCENT' | 'FLAT'>('NONE');
+  const [discountValue, setDiscountValue] = useState<number>(0);
+  const [notes, setNotes] = useState<string>('');
 
   // Modals state
-  const [settleModalOpen, setSettleModalOpen] = useState(false);
-  const [receiptModalOpen, setReceiptModalOpen] = useState(false);
-  const [kotModalOpen, setKotModalOpen] = useState(false);
-  const [currentBillData, setCurrentBillData] = useState(null);
-  const [processing, setProcessing] = useState(false);
+  const [settleModalOpen, setSettleModalOpen] = useState<boolean>(false);
+  const [receiptModalOpen, setReceiptModalOpen] = useState<boolean>(false);
+  const [kotModalOpen, setKotModalOpen] = useState<boolean>(false);
+  const [currentBillData, setCurrentBillData] = useState<Bill | null>(null);
+  const [processing, setProcessing] = useState<boolean>(false);
 
   // Initial load
   useEffect(() => {
@@ -52,8 +53,9 @@ export default function BillingPage() {
         // Default to first available table if dine-in
         const firstAvail = (tbls || []).find((t) => t.status === 'AVAILABLE');
         if (firstAvail) setSelectedTableId(firstAvail.tableId);
-      } catch (err) {
-        showToast('Error loading menu catalog: ' + err.message, 'error');
+      } catch (err: unknown) {
+        const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+        showToast('Error loading menu catalog: ' + errorMsg, 'error');
       } finally {
         setLoading(false);
       }
@@ -62,7 +64,7 @@ export default function BillingPage() {
   }, [showToast]);
 
   // Cart operations
-  const addToCart = (item) => {
+  const addToCart = (item: MenuItem) => {
     setCart((prev) => {
       const existing = prev.find((i) => i.itemId === item.itemId);
       if (existing) {
@@ -85,7 +87,7 @@ export default function BillingPage() {
     });
   };
 
-  const updateQuantity = (itemId, delta) => {
+  const updateQuantity = (itemId: string, delta: number) => {
     setCart((prev) =>
       prev
         .map((item) => {
@@ -95,11 +97,11 @@ export default function BillingPage() {
           }
           return item;
         })
-        .filter(Boolean)
+        .filter((i): i is CartItem => i !== null)
     );
   };
 
-  const removeFromCart = (itemId) => {
+  const removeFromCart = (itemId: string) => {
     setCart((prev) => prev.filter((i) => i.itemId !== itemId));
   };
 
@@ -157,7 +159,7 @@ export default function BillingPage() {
   }, [cart, discountType, discountValue, settings.default_tax_rate]);
 
   // Handle Create / Save Bill
-  const handleCreateBill = async () => {
+  const handleCreateBill = async (): Promise<Bill | undefined> => {
     if (cart.length === 0) {
       showToast('Please add items to cart before creating bill', 'warning');
       return;
@@ -172,13 +174,13 @@ export default function BillingPage() {
     try {
       const payload = {
         orderType,
-        tableId: orderType === 'DINE_IN' ? selectedTableId : null,
+        tableId: orderType === 'DINE_IN' ? selectedTableId : undefined,
         customerName: customerName.trim() || 'Walk-in Guest',
-        customerPhone: customerPhone.trim() || null,
+        customerPhone: customerPhone.trim() || undefined,
         items: cart,
         discountType,
         discountValue: Number(discountValue) || 0,
-        notes: notes.trim() || null,
+        notes: notes.trim() || undefined,
       };
 
       const result = await billApi.create(payload);
@@ -193,8 +195,9 @@ export default function BillingPage() {
       setTables(tbls || []);
 
       return fullDetails;
-    } catch (err) {
-      showToast('Bill creation failed: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Bill creation failed';
+      showToast('Bill creation failed: ' + errorMsg, 'error');
       throw err;
     } finally {
       setProcessing(false);
@@ -216,7 +219,7 @@ export default function BillingPage() {
     }
   };
 
-  const handleSettleConfirm = async ({ paymentMode, amountPaid, notes: payNotes }) => {
+  const handleSettleConfirm = async ({ paymentMode, amountPaid, notes: payNotes }: { paymentMode: string; amountPaid: number; notes?: string }) => {
     if (!currentBillData?.billId) return;
     setProcessing(true);
     try {
@@ -229,11 +232,11 @@ export default function BillingPage() {
       showToast('Bill settled and payment collected via ' + paymentMode + '!', 'success');
 
       // Update bill record with settled state
-      const updated = {
+      const updated: Bill = {
         ...currentBillData,
         paymentMode,
         paymentStatus: 'PAID',
-        billStatus: 'SETTLED',
+        status: 'PAID',
       };
       setCurrentBillData(updated);
       setSettleModalOpen(false);
@@ -243,8 +246,9 @@ export default function BillingPage() {
       clearCart();
       const tbls = await tableApi.getAll();
       setTables(tbls || []);
-    } catch (err) {
-      showToast('Settlement failed: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Settlement failed';
+      showToast('Settlement failed: ' + errorMsg, 'error');
     } finally {
       setProcessing(false);
     }
@@ -363,7 +367,7 @@ export default function BillingPage() {
 
                     <div className="mt-3 flex items-center justify-between pt-2 border-t border-slate-800/60">
                       <span className="text-xs font-black text-amber-400">
-                        {settings.currency_symbol} {Number(item.price).toFixed(2)}
+                        {settings.currency_symbol || '₹'} {Number(item.price).toFixed(2)}
                       </span>
 
                       {inCart ? (
@@ -389,7 +393,7 @@ export default function BillingPage() {
       </div>
 
       {/* RIGHT: Live Bill & Cart Summary */}
-      <div className="w-full lg:w-[420px] bg-slate-900 border border-slate-800 rounded-2xl flex flex-col justify-between overflow-hidden shadow-xl">
+      <div className="w-full lg:w-[420px] bg-slate-900 border border-slate-800 rounded-2xl flex flex-col justify-between overflow-hidden shadow-xl shrink-0">
         {/* Cart Header & Order Type Selector */}
         <div className="p-3 border-b border-slate-800 bg-slate-950/60 space-y-2.5">
           {/* Order Type Tabs */}
@@ -472,7 +476,7 @@ export default function BillingPage() {
                 <div className="flex-1 min-w-0 pr-1">
                   <h5 className="text-xs font-semibold text-slate-200 truncate">{item.itemName}</h5>
                   <p className="text-[11px] text-slate-400">
-                    {settings.currency_symbol} {item.unitPrice.toFixed(2)} each
+                    {settings.currency_symbol || '₹'} {item.unitPrice.toFixed(2)} each
                   </p>
                 </div>
 
@@ -498,7 +502,7 @@ export default function BillingPage() {
                 {/* Line Total & Delete */}
                 <div className="text-right w-16">
                   <p className="text-xs font-bold text-slate-100">
-                    {settings.currency_symbol} {(item.quantity * item.unitPrice).toFixed(2)}
+                    {settings.currency_symbol || '₹'} {(item.quantity * item.unitPrice).toFixed(2)}
                   </p>
                   <button
                     onClick={() => removeFromCart(item.itemId)}
@@ -525,7 +529,7 @@ export default function BillingPage() {
             <div className="flex justify-between">
               <span>Items Subtotal:</span>
               <span className="font-medium text-slate-200">
-                {settings.currency_symbol} {financialTotals.subTotal.toFixed(2)}
+                {settings.currency_symbol || '₹'} {financialTotals.subTotal.toFixed(2)}
               </span>
             </div>
 
@@ -535,32 +539,32 @@ export default function BillingPage() {
                 <span>Discount:</span>
                 <select
                   value={discountType}
-                  onChange={(e) => setDiscountType(e.target.value)}
+                  onChange={(e) => setDiscountType(e.target.value as 'NONE' | 'PERCENT' | 'FLAT')}
                   className="bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-[11px] text-slate-300"
                 >
                   <option value="NONE">None</option>
                   <option value="PERCENT">%</option>
-                  <option value="FLAT">{settings.currency_symbol}</option>
+                  <option value="FLAT">{settings.currency_symbol || '₹'}</option>
                 </select>
                 {discountType !== 'NONE' && (
                   <input
                     type="number"
                     min="0"
                     value={discountValue}
-                    onChange={(e) => setDiscountValue(e.target.value)}
+                    onChange={(e) => setDiscountValue(Number(e.target.value))}
                     className="w-12 bg-slate-900 border border-slate-700 rounded px-1 text-[11px] text-slate-200 text-right"
                   />
                 )}
               </span>
               <span className="text-rose-400 font-medium">
-                - {settings.currency_symbol} {financialTotals.discountAmount.toFixed(2)}
+                - {settings.currency_symbol || '₹'} {financialTotals.discountAmount.toFixed(2)}
               </span>
             </div>
 
             <div className="flex justify-between">
               <span>GST ({financialTotals.taxRate}%):</span>
               <span className="text-slate-200">
-                {settings.currency_symbol} {financialTotals.taxAmount.toFixed(2)}
+                {settings.currency_symbol || '₹'} {financialTotals.taxAmount.toFixed(2)}
               </span>
             </div>
 
@@ -576,7 +580,7 @@ export default function BillingPage() {
           <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
             <span className="text-sm font-bold text-slate-200">Grand Total:</span>
             <span className="text-xl font-black text-amber-400">
-              {settings.currency_symbol} {financialTotals.grandTotal.toFixed(2)}
+              {settings.currency_symbol || '₹'} {financialTotals.grandTotal.toFixed(2)}
             </span>
           </div>
 
@@ -631,13 +635,15 @@ export default function BillingPage() {
 
       {kotModalOpen && (
         <KOTModal
-          bill={currentBillData}
           items={cart}
           tableNumber={selectedTableObj?.tableNumber}
           orderType={orderType}
+          billNumber={currentBillData?.billNumber}
           onClose={() => setKotModalOpen(false)}
         />
       )}
     </div>
   );
-}
+};
+
+export default BillingPage;

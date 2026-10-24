@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
 
-export default function MainLayout({ activePage, setActivePage, children }) {
+interface MainLayoutProps {
+  activePage: string;
+  setActivePage: (page: string) => void;
+  children: ReactNode;
+}
+
+interface NavItem {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePage, children }) => {
   const { user, logout, isAdmin } = useAuth();
   const { settings } = useSettings();
 
-  const navigation = [
+  const navigation: NavItem[] = [
     { id: 'dashboard', name: 'Dashboard', icon: '📊' },
     { id: 'pos', name: 'Live POS Billing', icon: '⚡' },
     { id: 'tables', name: 'Table Layout', icon: '🍽️' },
@@ -21,7 +33,7 @@ export default function MainLayout({ activePage, setActivePage, children }) {
   return (
     <div className="flex h-screen bg-slate-950 overflow-hidden font-sans">
       {/* Sidebar */}
-      <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between select-none">
+      <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between select-none shrink-0">
         <div>
           {/* Brand header */}
           <div className="p-4 border-b border-slate-800 flex items-center gap-3">
@@ -30,7 +42,7 @@ export default function MainLayout({ activePage, setActivePage, children }) {
             </div>
             <div className="overflow-hidden">
               <h1 className="font-bold text-slate-100 text-sm truncate leading-tight">
-                {settings.restaurant_name}
+                {settings.restaurant_name || 'Billora POS'}
               </h1>
               <span className="text-[11px] text-amber-400 font-medium">Offline POS Engine</span>
             </div>
@@ -88,7 +100,7 @@ export default function MainLayout({ activePage, setActivePage, children }) {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col overflow-hidden bg-slate-950">
-        <header className="h-14 border-b border-slate-800/80 bg-slate-900/40 px-6 flex items-center justify-between">
+        <header className="h-14 border-b border-slate-800/80 bg-slate-900/40 px-6 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2 text-sm text-slate-400">
             <span className="text-slate-500">System</span>
             <span>/</span>
@@ -99,12 +111,24 @@ export default function MainLayout({ activePage, setActivePage, children }) {
 
           <div className="flex items-center gap-4 text-xs text-slate-400">
             <div className="hidden sm:flex items-center gap-2">
+              <span className="text-slate-500">Printer:</span>
+              <span className="font-semibold text-amber-400 uppercase">{settings.thermal_printer_width || '80mm'}</span>
+            </div>
+            <div className="h-4 w-px bg-slate-800 hidden sm:block"></div>
+            <div className="hidden sm:flex items-center gap-2">
               <span className="text-slate-500">Currency:</span>
-              <span className="font-semibold text-slate-300">{settings.currency_symbol} ({settings.currency_code})</span>
+              <span className="font-semibold text-slate-300">
+                {settings.currency_symbol || '₹'} ({settings.currency_code || 'INR'})
+              </span>
             </div>
             <div className="h-4 w-px bg-slate-800 hidden sm:block"></div>
             <div className="text-slate-300">
-              {new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+              {new Date().toLocaleDateString('en-IN', {
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })}
             </div>
           </div>
         </header>
@@ -115,4 +139,6 @@ export default function MainLayout({ activePage, setActivePage, children }) {
       </main>
     </div>
   );
-}
+};
+
+export default MainLayout;

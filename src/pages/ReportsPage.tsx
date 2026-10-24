@@ -2,20 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { reportApi } from '../api/client';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
+import { SalesReport } from '../types';
 
-export default function ReportsPage() {
+export const ReportsPage: React.FC = () => {
   const { settings } = useSettings();
   const { showToast } = useToast();
 
-  const [fromDate, setFromDate] = useState(() => {
+  const [fromDate, setFromDate] = useState<string>(() => {
     const d = new Date();
     d.setDate(d.getDate() - 7);
     return d.toISOString().split('T')[0];
   });
-  const [toDate, setToDate] = useState(() => new Date().toISOString().split('T')[0]);
-  const [paymentMode, setPaymentMode] = useState('');
-  const [reportData, setReportData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [toDate, setToDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
+  const [paymentMode, setPaymentMode] = useState<string>('');
+  const [reportData, setReportData] = useState<SalesReport | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchReport = async () => {
     setLoading(true);
@@ -26,8 +27,9 @@ export default function ReportsPage() {
         paymentMode: paymentMode || undefined,
       });
       setReportData(data);
-    } catch (err) {
-      showToast('Error generating sales report: ' + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Error generating report';
+      showToast('Error generating sales report: ' + errorMsg, 'error');
     } finally {
       setLoading(false);
     }
@@ -37,7 +39,7 @@ export default function ReportsPage() {
     fetchReport();
   }, [paymentMode]);
 
-  const setPresetRange = (days) => {
+  const setPresetRange = (days: number) => {
     const end = new Date();
     const start = new Date();
     start.setDate(end.getDate() - days);
@@ -62,19 +64,19 @@ export default function ReportsPage() {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => { setPresetRange(0); fetchReport(); }}
-            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-950 border border-slate-800 text-slate-300 hover:bg-slate-800"
+            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-950 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-colors"
           >
             Today
           </button>
           <button
             onClick={() => { setPresetRange(7); fetchReport(); }}
-            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-950 border border-slate-800 text-slate-300 hover:bg-slate-800"
+            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-950 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-colors"
           >
             Last 7 Days
           </button>
           <button
             onClick={() => { setPresetRange(30); fetchReport(); }}
-            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-950 border border-slate-800 text-slate-300 hover:bg-slate-800"
+            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-950 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-colors"
           >
             Last 30 Days
           </button>
@@ -110,14 +112,14 @@ export default function ReportsPage() {
 
           <button
             onClick={fetchReport}
-            className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-lg shadow"
+            className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-lg shadow transition-colors"
           >
             Filter
           </button>
 
           <button
             onClick={handlePrint}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1"
+            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1 transition-colors"
           >
             <span>🖨️</span>
             <span>Print Report</span>
@@ -130,7 +132,7 @@ export default function ReportsPage() {
         <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Net Sales Revenue</span>
           <h3 className="text-2xl font-black text-amber-400 mt-2">
-            {settings.currency_symbol} {Number(reportData?.totalSales || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            {settings.currency_symbol || '₹'} {Number(reportData?.totalSales || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </h3>
           <p className="text-[11px] text-slate-500 mt-1">Settled invoices in period</p>
         </div>
@@ -146,7 +148,7 @@ export default function ReportsPage() {
         <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Tax (GST)</span>
           <h3 className="text-2xl font-black text-slate-100 mt-2">
-            {settings.currency_symbol} {Number(reportData?.totalTax || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            {settings.currency_symbol || '₹'} {Number(reportData?.totalTax || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </h3>
           <p className="text-[11px] text-slate-500 mt-1">Output tax liability</p>
         </div>
@@ -154,7 +156,7 @@ export default function ReportsPage() {
         <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Discounts Given</span>
           <h3 className="text-2xl font-black text-rose-400 mt-2">
-            {settings.currency_symbol} {Number(reportData?.totalDiscount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            {settings.currency_symbol || '₹'} {Number(reportData?.totalDiscount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </h3>
           <p className="text-[11px] text-slate-500 mt-1">Promotional markdowns</p>
         </div>
@@ -186,7 +188,7 @@ export default function ReportsPage() {
             <tbody className="divide-y divide-slate-800/60 text-slate-200">
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="p-8 text-center text-slate-500">
+                  <td colSpan={6} className="p-8 text-center text-slate-500">
                     Calculating period statistics...
                   </td>
                 </tr>
@@ -194,26 +196,31 @@ export default function ReportsPage() {
                 reportData.dailyTrend.map((row) => (
                   <tr key={row.reportDate} className="hover:bg-slate-800/40 font-mono">
                     <td className="p-3.5 font-bold text-slate-100 font-sans">
-                      {new Date(row.reportDate).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+                      {new Date(row.reportDate).toLocaleDateString('en-IN', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
                     </td>
                     <td className="p-3.5 text-center">{row.ordersCount}</td>
                     <td className="p-3.5 text-right">
-                      {settings.currency_symbol} {Number(row.subTotal).toFixed(2)}
+                      {settings.currency_symbol || '₹'} {Number(row.subTotal).toFixed(2)}
                     </td>
                     <td className="p-3.5 text-right text-rose-400">
-                      {Number(row.discount) > 0 ? `- ${settings.currency_symbol} ${Number(row.discount).toFixed(2)}` : '0.00'}
+                      {Number(row.discount) > 0 ? `- ${settings.currency_symbol || '₹'} ${Number(row.discount).toFixed(2)}` : '0.00'}
                     </td>
                     <td className="p-3.5 text-right text-slate-400">
-                      {settings.currency_symbol} {Number(row.tax).toFixed(2)}
+                      {settings.currency_symbol || '₹'} {Number(row.tax).toFixed(2)}
                     </td>
                     <td className="p-3.5 text-right font-black text-amber-400 text-sm">
-                      {settings.currency_symbol} {Number(row.netRevenue).toFixed(2)}
+                      {settings.currency_symbol || '₹'} {Number(row.netRevenue).toFixed(2)}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="p-8 text-center text-slate-500">
+                  <td colSpan={6} className="p-8 text-center text-slate-500">
                     No revenue recorded for the selected period.
                   </td>
                 </tr>
@@ -224,4 +231,6 @@ export default function ReportsPage() {
       </div>
     </div>
   );
-}
+};
+
+export default ReportsPage;
