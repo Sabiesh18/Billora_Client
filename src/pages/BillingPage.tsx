@@ -234,8 +234,9 @@ export const BillingPage: React.FC = () => {
       // Update bill record with settled state
       const updated: Bill = {
         ...currentBillData,
-        paymentMode,
+        paymentMode: paymentMode as any,
         paymentStatus: 'PAID',
+        billStatus: 'SETTLED',
         status: 'PAID',
       };
       setCurrentBillData(updated);

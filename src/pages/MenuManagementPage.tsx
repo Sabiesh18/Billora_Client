@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { categoryApi, menuApi } from '../api/client';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
-import { Category, MenuItem } from '../types';
+import { Category, MenuItem, FoodType } from '../types';
 
 export const MenuManagementPage: React.FC = () => {
   const { settings } = useSettings();
@@ -26,7 +26,7 @@ export const MenuManagementPage: React.FC = () => {
   const [itemName, setItemName] = useState<string>('');
   const [itemDesc, setItemDesc] = useState<string>('');
   const [itemPrice, setItemPrice] = useState<string | number>('');
-  const [itemFoodType, setItemFoodType] = useState<string>('VEG');
+  const [itemFoodType, setItemFoodType] = useState<FoodType>('VEG');
   const [itemTaxRate, setItemTaxRate] = useState<string | number>('5.00');
   const [submitting, setSubmitting] = useState<boolean>(false);
 
@@ -373,7 +373,7 @@ export const MenuManagementPage: React.FC = () => {
                   </label>
                   <select
                     value={itemFoodType}
-                    onChange={(e) => setItemFoodType(e.target.value)}
+                    onChange={(e) => setItemFoodType(e.target.value as FoodType)}
                     className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
                   >
                     <option value="VEG">VEG</option>

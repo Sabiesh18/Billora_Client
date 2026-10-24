@@ -108,6 +108,8 @@ export interface BillItem {
   notes?: string;
 }
 
+export type CartItem = BillItem;
+
 export type OrderType = 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
 export type PaymentMode = 'CASH' | 'CARD' | 'UPI' | 'SPLIT' | 'UNPAID';
 export type BillStatus = 'ACTIVE' | 'SETTLED' | 'CANCELLED';
@@ -132,6 +134,7 @@ export interface Bill {
   paymentMode: PaymentMode;
   paymentStatus: 'PENDING' | 'PAID' | 'REFUNDED';
   billStatus: BillStatus;
+  status?: string;
   notes?: string;
   cashierId?: string;
   createdAt: string;
@@ -142,12 +145,12 @@ export interface Bill {
 }
 
 export interface BillCreatePayload {
-  orderType: OrderType;
+  orderType: OrderType | string;
   tableId?: string | null;
   customerName?: string;
   customerPhone?: string | null;
   items: BillItem[];
-  discountType: DiscountType;
+  discountType: DiscountType | string;
   discountValue: number;
   notes?: string | null;
 }

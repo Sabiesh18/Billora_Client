@@ -16,7 +16,7 @@ export const SettingsPage: React.FC = () => {
     fssai_license: settings.fssai_license || '',
     currency_symbol: settings.currency_symbol || '₹',
     currency_code: settings.currency_code || 'INR',
-    default_tax_rate: settings.default_tax_rate || '5.00',
+    default_tax_rate: String(settings.default_tax_rate ?? '5.00'),
     thermal_printer_width: settings.thermal_printer_width || '80mm',
     receipt_footer: settings.receipt_footer || 'Thank You! Visit Again!',
   });
