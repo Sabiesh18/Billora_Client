@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
+import { useTheme } from '../context/ThemeContext';
+import ThemeToggle from '../components/common/ThemeToggle';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFloppyDisk,
   faStore,
   faPrint,
   faReceipt,
+  faCircleHalfStroke,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const SettingsPage: React.FC = () => {
@@ -230,6 +233,21 @@ export const SettingsPage: React.FC = () => {
               onChange={handleChange}
               className="w-full bg-white border border-[#E5D7CE] rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#F67009]"
             />
+          </div>
+        </div>
+
+        {/* Section 4: Visual Theme & Appearance */}
+        <div>
+          <h3 className="text-xs font-bold text-[#F67009] uppercase tracking-wider mb-4 border-b border-[#F3E5DC] pb-2 flex items-center gap-2">
+            <FontAwesomeIcon icon={faCircleHalfStroke} />
+            <span>4. Visual Theme & Display Mode</span>
+          </h3>
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-[#FFF9F6] border border-[#F3E5DC]">
+            <div>
+              <p className="text-xs font-bold text-slate-800">Interface Theme</p>
+              <p className="text-[11px] text-slate-500">Toggle between Light mode (warm cream) and Dark mode (deep slate)</p>
+            </div>
+            <ThemeToggle showLabel={true} />
           </div>
         </div>
 

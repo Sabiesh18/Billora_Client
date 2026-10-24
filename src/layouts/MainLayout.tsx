@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
+import ThemeToggle from '../components/common/ThemeToggle';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChartPie,
@@ -128,7 +129,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-xs text-slate-600">
+          <div className="flex items-center gap-3 text-xs text-slate-600">
             <div className="hidden sm:flex items-center gap-2 bg-[#FFF9F6] border border-[#F3E5DC] px-2.5 py-1 rounded-lg">
               <FontAwesomeIcon icon={faPrint} className="text-[#F67009]" />
               <span className="text-slate-400">Printer:</span>
@@ -140,7 +141,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
                 {settings.currency_symbol || '₹'} ({settings.currency_code || 'INR'})
               </span>
             </div>
-            <div className="text-slate-600 font-medium">
+            <div className="hidden md:block text-slate-600 font-medium">
               {new Date().toLocaleDateString('en-IN', {
                 weekday: 'short',
                 day: 'numeric',
@@ -148,6 +149,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
                 year: 'numeric',
               })}
             </div>
+
+            {/* Dark Mode Toggle Button */}
+            <ThemeToggle showLabel={false} />
           </div>
         </header>
 

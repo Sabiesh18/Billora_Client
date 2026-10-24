@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useSettings } from '../context/SettingsContext';
+import ThemeToggle from '../components/common/ThemeToggle';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUtensils,
@@ -45,7 +46,10 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF9F6] flex flex-col justify-center items-center p-4 select-none font-sans">
+    <div className="min-h-screen bg-[#FFF9F6] flex flex-col justify-center items-center p-4 select-none font-sans relative">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle showLabel={true} />
+      </div>
       <div className="w-full max-w-md bg-white border border-[#F3E5DC] rounded-3xl shadow-xl p-8">
         {/* Logo and Restaurant Title */}
         <div className="text-center mb-8">
