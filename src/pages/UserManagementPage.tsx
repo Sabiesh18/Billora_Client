@@ -100,11 +100,11 @@ export const UserManagementPage: React.FC = () => {
               <tr>
                 <th className="p-3.5">Username</th>
                 <th className="p-3.5">Full Name</th>
-                <th className="p-3.5">Assigned Role</th>
+                <th className="p-3.5">System Role</th>
                 <th className="p-3.5">Email</th>
                 <th className="p-3.5">Phone</th>
                 <th className="p-3.5 text-center">Status</th>
-                <th className="p-3.5">Created At</th>
+                <th className="p-3.5">Joined Date</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F3E5DC]/60 text-slate-800">

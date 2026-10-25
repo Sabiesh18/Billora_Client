@@ -15,6 +15,10 @@ import {
   SalesReport,
   ActivityLog,
   RestaurantSettings,
+  Vendor,
+  Asset,
+  Purchase,
+  AssetSummary,
 } from '../types';
 
 const API_BASE_URL = '/api';
@@ -175,3 +179,37 @@ export const settingsApi = {
   update: (settings: Partial<RestaurantSettings>): Promise<any> =>
     apiRequest('/settings', { method: 'PUT', body: JSON.stringify(settings) }),
 };
+
+// Asset Management APIs
+export const vendorApi = {
+  getAll: (): Promise<Vendor[]> =>
+    apiRequest<Vendor[]>('/vendors'),
+  save: (vendor: Partial<Vendor>): Promise<Vendor> =>
+    apiRequest<Vendor>('/vendors', { method: 'POST', body: JSON.stringify(vendor) }),
+  delete: (vendorId: string): Promise<any> =>
+    apiRequest(`/vendors/${vendorId}`, { method: 'DELETE' }),
+};
+
+export const assetApi = {
+  getAll: (): Promise<Asset[]> =>
+    apiRequest<Asset[]>('/assets'),
+  save: (asset: Partial<Asset>): Promise<Asset> =>
+    apiRequest<Asset>('/assets', { method: 'POST', body: JSON.stringify(asset) }),
+  delete: (assetId: string): Promise<any> =>
+    apiRequest(`/assets/${assetId}`, { method: 'DELETE' }),
+};
+
+export const purchaseApi = {
+  getAll: (): Promise<Purchase[]> =>
+    apiRequest<Purchase[]>('/purchases'),
+  save: (purchase: Partial<Purchase>): Promise<Purchase> =>
+    apiRequest<Purchase>('/purchases', { method: 'POST', body: JSON.stringify(purchase) }),
+  delete: (purchaseId: string): Promise<any> =>
+    apiRequest(`/purchases/${purchaseId}`, { method: 'DELETE' }),
+};
+
+export const assetSummaryApi = {
+  getSummary: (): Promise<AssetSummary> =>
+    apiRequest<AssetSummary>('/assets/summary'),
+};
+

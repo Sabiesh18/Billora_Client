@@ -207,7 +207,27 @@ export const BillingPage: React.FC = () => {
 
       const billRes: any = await billApi.create(payload as any);
       showToast(`Bill #${billRes.billNumber} created successfully!`, 'success');
-      setCurrentBillData(billRes);
+
+      // Populate full bill details including items and calculations for printing receipt
+      const fullBill: Bill = {
+        ...billRes,
+        items: cart.map((c) => ({
+          itemName: c.itemName,
+          quantity: c.quantity,
+          unitPrice: c.unitPrice,
+          totalPrice: c.unitPrice * c.quantity,
+          notes: c.notes,
+        })),
+        tableNumber: tables.find((t) => t.tableId === selectedTableId)?.tableNumber || 'WALK-IN',
+        customerName: customerName.trim() || undefined,
+        customerPhone: customerPhone.trim() || undefined,
+        subTotal: financialTotals.subTotal,
+        discountAmount: financialTotals.discountAmount,
+        taxAmount: financialTotals.taxAmount,
+        taxRate: financialTotals.taxRate,
+        grandTotal: financialTotals.grandTotal,
+      };
+      setCurrentBillData(fullBill);
 
       // Refresh tables to reflect OCCUPIED status
       const tbls = await tableApi.getAll();
@@ -262,8 +282,13 @@ export const BillingPage: React.FC = () => {
       setSettleModalOpen(false);
       setReceiptModalOpen(true);
 
-      // Reset cart and refresh tables
-      clearCart();
+      // Reset cart and customer fields, but retain currentBillData for thermal receipt
+      setCart([]);
+      setNotes('');
+      setDiscountValue(0);
+      setDiscountType('NONE');
+      setCustomerName('');
+      setCustomerPhone('');
       const tbls = await tableApi.getAll();
       setTables(tbls || []);
     } catch (err: unknown) {
@@ -619,7 +644,7 @@ export const BillingPage: React.FC = () => {
               className="py-2.5 px-2 bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-xl text-xs font-bold border border-[#FED7AA] disabled:opacity-50 transition-colors shadow-xs flex items-center justify-center gap-1.5"
             >
               <FontAwesomeIcon icon={faKitchenSet} />
-              <span>Print KOT</span>
+              <span>Kitchen Slip</span>
             </button>
 
             <button
@@ -658,7 +683,10 @@ export const BillingPage: React.FC = () => {
       {receiptModalOpen && currentBillData && (
         <ThermalReceiptModal
           bill={currentBillData}
-          onClose={() => setReceiptModalOpen(false)}
+          onClose={() => {
+            setReceiptModalOpen(false);
+            setCurrentBillData(null);
+          }}
         />
       )}
 

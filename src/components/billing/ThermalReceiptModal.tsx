@@ -94,7 +94,7 @@ export const ThermalReceiptModal: React.FC<ThermalReceiptModalProps> = ({ bill, 
             {/* Restaurant Header */}
             <div className="text-center pb-2 border-b border-dashed border-gray-400 mb-2">
               <h2 className={`${is58mm ? 'text-xs' : 'text-sm'} font-black uppercase tracking-tight`}>
-                {settings.restaurant_name || 'RESTAURANT & HOTEL'}
+                {settings.restaurant_name || 'Billora Restaurant'}
               </h2>
               {settings.restaurant_tagline && (
                 <p className="text-[10px] text-gray-700 font-medium">{settings.restaurant_tagline}</p>
@@ -150,43 +150,75 @@ export const ThermalReceiptModal: React.FC<ThermalReceiptModalProps> = ({ bill, 
               ))}
             </div>
 
-            {/* Calculations Breakdown */}
-            <div className="space-y-1 text-[10px]">
-              <div className="flex justify-between text-gray-700">
-                <span>Sub Total:</span>
-                <span>{settings.currency_symbol || '₹'} {Number(bill.subTotal || 0).toFixed(2)}</span>
-              </div>
+            {/* Bill Summary Breakdown */}
+            {(() => {
+              const subTotal = Number(bill.subTotal ?? (bill as any).sub_total ?? 0);
+              const discountAmount = Number(bill.discountAmount ?? (bill as any).discount_amount ?? 0);
+              const taxAmount = Number(bill.taxAmount ?? (bill as any).tax_amount ?? 0);
+              const roundOff = Number(bill.roundOff ?? (bill as any).round_off ?? 0);
+              const grandTotal = Number(bill.grandTotal ?? (bill as any).grand_total ?? 0);
+              const taxRate = bill.taxRate ?? (bill as any).tax_rate ?? settings.default_tax_rate ?? 5;
+              const paymentMode = String(bill.paymentMode ?? (bill as any).payment_mode ?? 'PAID').toUpperCase();
+              const paymentStatus = String(bill.paymentStatus ?? (bill as any).payment_status ?? bill.status ?? 'PAID').toUpperCase();
+              const itemsList = bill.items || (bill as any).bill_items || [];
+              const totalQty = itemsList.reduce((acc: number, item: any) => acc + Number(item.quantity || 1), 0);
+              const currency = settings.currency_symbol || '₹';
 
-              {Number(bill.discountAmount || 0) > 0 && (
-                <div className="flex justify-between text-gray-600">
-                  <span>Discount:</span>
-                  <span>- {settings.currency_symbol || '₹'} {Number(bill.discountAmount || 0).toFixed(2)}</span>
+              return (
+                <div className="pt-2 border-t-2 border-dashed border-black mb-2 space-y-1">
+                  <div className="text-center font-black tracking-widest text-[11px] mb-1.5 uppercase">
+                    *** BILL SUMMARY ***
+                  </div>
+
+                  <div className="flex justify-between text-[10px] text-gray-800">
+                    <span>Total Items:</span>
+                    <span className="font-bold">{itemsList.length} items (Qty: {totalQty})</span>
+                  </div>
+
+                  <div className="flex justify-between text-[10px] text-gray-800">
+                    <span>Sub Total:</span>
+                    <span className="font-bold">{currency} {subTotal.toFixed(2)}</span>
+                  </div>
+
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-[10px] text-gray-700">
+                      <span>Discount:</span>
+                      <span className="font-bold">- {currency} {discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between text-[10px] text-gray-800">
+                    <span>GST / Tax ({taxRate}%):</span>
+                    <span className="font-bold">+ {currency} {taxAmount.toFixed(2)}</span>
+                  </div>
+
+                  {roundOff !== 0 && (
+                    <div className="flex justify-between text-[10px] text-gray-700">
+                      <span>Round Off:</span>
+                      <span className="font-bold">
+                        {roundOff > 0 ? `+ ${roundOff.toFixed(2)}` : roundOff.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between font-black text-xs border-t-2 border-b-2 border-black py-1.5 my-1">
+                    <span className="tracking-wide">NET PAYABLE:</span>
+                    <span className="text-sm font-black">
+                      {currency} {grandTotal.toFixed(2)}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between text-[9.5px] pt-0.5">
+                    <span className="font-semibold">Payment Mode:</span>
+                    <span className="font-black uppercase tracking-wider">{paymentMode}</span>
+                  </div>
+                  <div className="flex justify-between text-[9.5px]">
+                    <span className="font-semibold">Payment Status:</span>
+                    <span className="font-black uppercase tracking-wider">{paymentStatus}</span>
+                  </div>
                 </div>
-              )}
-
-              {Number(bill.taxAmount || 0) > 0 && (
-                <div className="flex justify-between text-gray-600">
-                  <span>GST / Tax ({bill.taxRate || settings.default_tax_rate}%):</span>
-                  <span>+ {settings.currency_symbol || '₹'} {Number(bill.taxAmount || 0).toFixed(2)}</span>
-                </div>
-              )}
-
-              <div className="flex justify-between font-black text-xs border-t-2 border-b-2 border-black py-1.5 mt-1">
-                <span>NET PAYABLE:</span>
-                <span className="text-sm">
-                  {settings.currency_symbol || '₹'} {Number(bill.grandTotal || 0).toFixed(2)}
-                </span>
-              </div>
-
-              <div className="flex justify-between text-[9px] pt-1">
-                <span>Payment Mode:</span>
-                <span className="font-bold uppercase tracking-wider">{bill.paymentMode || 'PAID'}</span>
-              </div>
-              <div className="flex justify-between text-[9px]">
-                <span>Status:</span>
-                <span className="font-bold uppercase">{bill.status || 'PAID'}</span>
-              </div>
-            </div>
+              );
+            })()}
 
             {/* Receipt Footer */}
             <div className="text-center mt-3 pt-2 border-t border-dashed border-gray-400 text-[9px] space-y-1">

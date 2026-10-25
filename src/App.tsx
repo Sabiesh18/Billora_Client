@@ -12,6 +12,7 @@ import ReportsPage from './pages/ReportsPage';
 import ActivityAuditPage from './pages/ActivityAuditPage';
 import UserManagementPage from './pages/UserManagementPage';
 import SettingsPage from './pages/SettingsPage';
+import AssetManagementPage from './pages/AssetManagementPage';
 
 export const App: React.FC = () => {
   const { isAuthenticated, isPostLoginLoading, dismissPostLoginLoader, user } = useAuth();
@@ -40,6 +41,8 @@ export const App: React.FC = () => {
         return <MenuManagementPage />;
       case 'reports':
         return <ReportsPage />;
+      case 'assets':
+        return <AssetManagementPage />;
       case 'audit':
         return <ActivityAuditPage />;
       case 'users':

@@ -15,6 +15,7 @@ import {
   faGear,
   faRightFromBracket,
   faPrint,
+  faBoxesStacked,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -41,6 +42,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
     { id: 'orders', name: 'Order History', icon: faReceipt },
     { id: 'menu', name: 'Menu & Categories', icon: faBookOpen },
     { id: 'reports', name: 'Sales Reports', icon: faChartLine },
+    { id: 'assets', name: 'Asset Management', icon: faBoxesStacked },
     { id: 'audit', name: 'Audit History', icon: faShieldHalved },
     ...(isAdmin ? [{ id: 'users', name: 'User Management', icon: faUsers }] : []),
     { id: 'settings', name: 'Settings', icon: faGear },

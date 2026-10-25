@@ -43,7 +43,7 @@ export const KOTModal: React.FC<KOTModalProps> = ({
           <div className="flex items-center gap-3">
             <span className="text-xs font-bold text-[#F67009] uppercase tracking-wider flex items-center gap-1.5">
               <FontAwesomeIcon icon={faKitchenSet} />
-              <span>Kitchen Order Ticket (KOT)</span>
+              <span>Kitchen Order Slip</span>
             </span>
             <div className="flex items-center bg-[#FFF9F6] p-0.5 rounded-lg border border-[#F3E5DC]">
               <button
@@ -81,13 +81,18 @@ export const KOTModal: React.FC<KOTModalProps> = ({
         {/* Printable Area Container */}
         <div className="p-6 bg-[#FFF9F6] flex justify-center overflow-y-auto max-h-[75vh]">
           <div
-            id="thermal-receipt-print-area"
+            id="kot-print-area"
             className={`w-full ${widthContainerClass} format-${paperWidth} bg-white text-black p-3.5 font-mono ${
               is58mm ? 'text-[10px]' : 'text-[11px]'
             } leading-tight rounded-sm shadow-md border border-[#F3E5DC]`}
           >
             <div className="text-center pb-2 border-b-2 border-black mb-2">
-              <h2 className="text-base font-black tracking-widest uppercase">*** K. O. T. ***</h2>
+              <h2 className="text-sm font-black uppercase tracking-tight">
+                {settings.restaurant_name || 'Billora Restaurant'}
+              </h2>
+              <p className="text-[11px] font-black tracking-widest uppercase mt-0.5">
+                *** KITCHEN ORDER SLIP ***
+              </p>
               <p className="text-sm font-black mt-1">TABLE: {tableNumber || 'TAKEAWAY'}</p>
               {billNumber && <p className="text-[10px] font-bold">REF: #{billNumber}</p>}
               <div className="text-[9px] text-gray-700 flex justify-between mt-1 px-1">

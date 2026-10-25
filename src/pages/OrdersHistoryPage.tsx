@@ -250,7 +250,7 @@ export const OrdersHistoryPage: React.FC = () => {
               <span>Cancel Bill #{cancelModalBill.billNumber}</span>
             </h3>
             <p className="text-xs text-slate-500 mb-4">
-              Cancelling a bill will release any associated table and log a permanent audit record into <code className="text-[#F67009] font-bold">tbl_ActivityHistory</code>.
+              Cancelling a bill will release any associated dining table and record an entry in the system Activity Audit trail.
             </p>
 
             <form onSubmit={handleConfirmCancel} className="space-y-4">

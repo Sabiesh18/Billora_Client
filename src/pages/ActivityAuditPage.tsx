@@ -48,7 +48,7 @@ export const ActivityAuditPage: React.FC = () => {
             <span>Unified Activity & Security Audit Trail</span>
           </h2>
           <p className="text-xs text-slate-500">
-            Immutable system event logs recorded in <code className="text-[#F67009] font-mono font-bold">tbl_ActivityHistory</code>
+            Comprehensive security audit trail tracking staff actions, operations, and system events.
           </p>
         </div>
 
@@ -86,19 +86,18 @@ export const ActivityAuditPage: React.FC = () => {
           <table className="w-full text-left text-xs">
             <thead className="bg-[#FFF9F6] text-slate-500 uppercase tracking-wider font-bold border-b border-[#F3E5DC]">
               <tr>
-                <th className="p-3.5">Timestamp</th>
-                <th className="p-3.5">Actor / User</th>
+                <th className="p-3.5">Date & Time</th>
+                <th className="p-3.5">Staff / User</th>
                 <th className="p-3.5">Module</th>
                 <th className="p-3.5">Action Event</th>
-                <th className="p-3.5">Event Description</th>
-                <th className="p-3.5">Record ID</th>
-                <th className="p-3.5 text-right">Details</th>
+                <th className="p-3.5">Event Details</th>
+                <th className="p-3.5 text-right">Audit Details</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F3E5DC] text-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-slate-400">
+                  <td colSpan={6} className="p-8 text-center text-slate-400">
                     Loading security audit logs...
                   </td>
                 </tr>
@@ -139,9 +138,6 @@ export const ActivityAuditPage: React.FC = () => {
                       <td className="p-3.5 text-slate-700 max-w-xs truncate" title={log.description}>
                         {log.description}
                       </td>
-                      <td className="p-3.5 font-mono text-[11px] text-slate-400">
-                        {log.recordId || '---'}
-                      </td>
                       <td className="p-3.5 text-right">
                         {(log.oldValue || log.newValue) && (
                           <button
@@ -149,7 +145,7 @@ export const ActivityAuditPage: React.FC = () => {
                             className="px-2.5 py-1 text-[11px] font-bold bg-[#FFF0E6] hover:bg-[#FED7AA] text-[#F67009] rounded-lg border border-[#FED7AA] transition-colors inline-flex items-center gap-1.5"
                           >
                             <FontAwesomeIcon icon={faCode} />
-                            <span>Inspect JSON</span>
+                            <span>View Details</span>
                           </button>
                         )}
                       </td>
@@ -158,7 +154,7 @@ export const ActivityAuditPage: React.FC = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-slate-400">
+                  <td colSpan={6} className="p-8 text-center text-slate-400">
                     No activity logs recorded.
                   </td>
                 </tr>

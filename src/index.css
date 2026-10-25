@@ -163,65 +163,113 @@ html.dark .shadow-2xl {
 }
 
 /* Protected Thermal Receipt Print Slip (Always pristine White Paper with Black Ink) */
-#thermal-receipt-print-area {
+#thermal-receipt-print-area,
+#kot-print-area {
   background-color: #ffffff !important;
   color: #000000 !important;
 }
 
-#thermal-receipt-print-area * {
+#thermal-receipt-print-area *,
+#kot-print-area * {
   color: #000000 !important;
 }
 
 #thermal-receipt-print-area p,
 #thermal-receipt-print-area span,
 #thermal-receipt-print-area h2,
-#thermal-receipt-print-area div {
+#thermal-receipt-print-area div,
+#kot-print-area p,
+#kot-print-area span,
+#kot-print-area h2,
+#kot-print-area div {
   color: #000000 !important;
 }
 
 /* =============================================================================
    THERMAL RECEIPT PRINTING STYLES (Supports Both 80mm and 58mm POS Printers)
+   Zero margin, Top-Left alignment to prevent center-page shifting on thermal rolls
    ============================================================================= */
 @media print {
-  body * {
-    visibility: hidden;
+  @page {
+    margin: 0 !important;
+    padding: 0 !important;
+    size: auto;
   }
 
-  /* Universal thermal print container */
-  #thermal-receipt-print-area, #thermal-receipt-print-area * {
-    visibility: visible;
-  }
-
-  #thermal-receipt-print-area {
-    position: absolute;
-    left: 0;
-    top: 0;
-    margin: 0;
-    padding: 3mm 2mm;
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
     background: #ffffff !important;
     color: #000000 !important;
-    font-family: 'Courier New', Courier, monospace;
     width: 100% !important;
-    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Hide all elements during print except thermal receipts */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Force all ancestors of print area to break out of flex centering */
+  div:has(#thermal-receipt-print-area),
+  div:has(#kot-print-area),
+  .fixed,
+  .backdrop-blur-sm,
+  .justify-center,
+  .items-center {
+    position: static !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    transform: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Universal thermal print containers - unhide and pin to top-left (0, 0) */
+  #thermal-receipt-print-area,
+  #thermal-receipt-print-area *,
+  #kot-print-area,
+  #kot-print-area * {
+    visibility: visible !important;
+  }
+
+  #thermal-receipt-print-area,
+  #kot-print-area {
+    position: absolute !important;
+    left: 0mm !important;
+    top: 0mm !important;
+    margin: 0mm !important;
+    padding: 2mm 2mm !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    text-align: left !important;
     box-shadow: none !important;
     border: none !important;
+    box-sizing: border-box !important;
+    display: block !important;
   }
 
   /* Target exact width for 80mm thermal receipt rolls */
-  #thermal-receipt-print-area.format-80mm {
+  #thermal-receipt-print-area,
+  #kot-print-area,
+  #thermal-receipt-print-area.format-80mm,
+  #kot-print-area.format-80mm {
     width: 72mm !important;
     max-width: 72mm !important;
+    min-width: 72mm !important;
   }
 
   /* Target exact width for 58mm compact thermal receipt rolls */
-  #thermal-receipt-print-area.format-58mm {
+  #thermal-receipt-print-area.format-58mm,
+  #kot-print-area.format-58mm {
     width: 48mm !important;
     max-width: 48mm !important;
+    min-width: 48mm !important;
     font-size: 8.5pt !important;
-  }
-
-  @page {
-    margin: 0;
-    size: auto;
   }
 }

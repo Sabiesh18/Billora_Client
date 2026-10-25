@@ -229,3 +229,61 @@ export interface RestaurantSettings {
   receipt_paper_width: ThermalPaperWidth;
   [key: string]: any;
 }
+
+export interface Vendor {
+  vendorId?: string;
+  vendorName: string;
+  contactPerson?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  gstin?: string;
+  category?: string;
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Asset {
+  assetId?: string;
+  assetCode?: string;
+  assetName: string;
+  category?: string;
+  vendorId?: string;
+  vendorName?: string;
+  purchaseDate?: string;
+  costPrice?: number;
+  quantity?: number;
+  locationArea?: string;
+  conditionStatus?: string;
+  warrantyExpiry?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Purchase {
+  purchaseId?: string;
+  invoiceNumber: string;
+  vendorId?: string;
+  vendorName?: string;
+  purchaseDate?: string;
+  totalAmount?: number;
+  taxAmount?: number;
+  paymentStatus?: string;
+  paymentMode?: string;
+  itemsDescription?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AssetSummary {
+  totalAssetValue: number;
+  totalAssetsCount: number;
+  totalVendorsCount: number;
+  totalPurchasesAmount: number;
+  operationalAssetsCount: number;
+  maintenanceAssetsCount: number;
+}
+

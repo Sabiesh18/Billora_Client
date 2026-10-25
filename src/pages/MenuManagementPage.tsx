@@ -92,6 +92,7 @@ export const MenuManagementPage: React.FC = () => {
 
     setSubmitting(true);
     try {
+      const parsedTaxRate = itemTaxRate === '' || isNaN(Number(itemTaxRate)) ? 0 : Number(itemTaxRate);
       const payload = {
         categoryId: itemCategoryId,
         itemCode: itemCode.trim() || undefined,
@@ -99,8 +100,8 @@ export const MenuManagementPage: React.FC = () => {
         description: itemDesc.trim() || undefined,
         price: Number(itemPrice),
         foodType: itemFoodType,
-        taxRate: Number(itemTaxRate) || 5,
-        isAvailable: true,
+        taxRate: parsedTaxRate,
+        isAvailable: editingItem ? editingItem.isAvailable : true,
       };
 
       if (editingItem) {
@@ -130,7 +131,7 @@ export const MenuManagementPage: React.FC = () => {
     setItemDesc(item.description || '');
     setItemPrice(item.price);
     setItemFoodType(item.foodType);
-    setItemTaxRate(item.taxRate || '5.00');
+    setItemTaxRate(item.taxRate !== undefined && item.taxRate !== null ? String(item.taxRate) : '0');
     setItemModalOpen(true);
   };
 
@@ -225,13 +226,13 @@ export const MenuManagementPage: React.FC = () => {
           <table className="w-full text-left text-xs">
             <thead className="bg-[#FFF9F6] text-slate-500 uppercase tracking-wider font-bold border-b border-[#F3E5DC]">
               <tr>
-                <th className="p-3.5">Code</th>
+                <th className="p-3.5">Item Code</th>
                 <th className="p-3.5">Item Name</th>
                 <th className="p-3.5">Category</th>
-                <th className="p-3.5">Type</th>
+                <th className="p-3.5">Diet Type</th>
                 <th className="p-3.5 text-right">Price</th>
-                <th className="p-3.5 text-center">Tax %</th>
-                <th className="p-3.5 text-center">Availability</th>
+                <th className="p-3.5 text-center">GST / Tax Rate</th>
+                <th className="p-3.5 text-center">Stock Status</th>
                 <th className="p-3.5 text-right">Actions</th>
               </tr>
             </thead>
