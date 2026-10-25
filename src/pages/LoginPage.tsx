@@ -74,6 +74,7 @@ export const LoginPage: React.FC = () => {
             <input
               type="text"
               required
+              autoComplete="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full bg-[#FFF9F6] border border-[#F3E5DC] rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F67009] focus:ring-1 focus:ring-[#F67009] transition-colors"
@@ -89,6 +90,7 @@ export const LoginPage: React.FC = () => {
             <input
               type="password"
               required
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-[#FFF9F6] border border-[#F3E5DC] rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F67009] focus:ring-1 focus:ring-[#F67009] transition-colors"

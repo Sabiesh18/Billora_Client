@@ -1,5 +1,6 @@
 import React, { useState, FormEvent } from 'react';
 import { useSettings } from '../../context/SettingsContext';
+import { useToast } from '../../context/ToastContext';
 import { Bill, BillSettlePayload } from '../../types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -20,6 +21,7 @@ interface PaymentModalProps {
 
 export default function PaymentModal({ bill, onSettle, onClose, loading }: PaymentModalProps) {
   const { settings } = useSettings();
+  const { showToast } = useToast();
   const [paymentMode, setPaymentMode] = useState<string>('CASH');
   const [amountPaid, setAmountPaid] = useState<number | string>(bill.grandTotal);
   const [notes, setNotes] = useState<string>('');
@@ -31,7 +33,7 @@ export default function PaymentModal({ bill, onSettle, onClose, loading }: Payme
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (paid < grandTotal) {
-      alert(`Amount paid cannot be less than Grand Total (${settings.currency_symbol} ${grandTotal.toFixed(2)})`);
+      showToast(`Amount paid cannot be less than Grand Total (${settings.currency_symbol} ${grandTotal.toFixed(2)})`, 'error');
       return;
     }
     onSettle({ paymentMode, amountPaid: paid, notes });
