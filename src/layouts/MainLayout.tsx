@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
+import { isModuleAllowed } from '../utils/permissions';
 import ThemeToggle from '../components/common/ThemeToggle';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -32,10 +33,10 @@ interface NavItem {
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePage, children }) => {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout } = useAuth();
   const { settings } = useSettings();
 
-  const navigation: NavItem[] = [
+  const allNavigation: NavItem[] = [
     { id: 'dashboard', name: 'Dashboard', icon: faChartPie },
     { id: 'pos', name: 'Live POS Billing', icon: faCashRegister },
     { id: 'tables', name: 'Table Layout', icon: faUtensils },
@@ -44,9 +45,13 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
     { id: 'reports', name: 'Sales Reports', icon: faChartLine },
     { id: 'assets', name: 'Asset Management', icon: faBoxesStacked },
     { id: 'audit', name: 'Audit History', icon: faShieldHalved },
-    ...(isAdmin ? [{ id: 'users', name: 'User Management', icon: faUsers }] : []),
+    { id: 'users', name: 'User Management', icon: faUsers },
     { id: 'settings', name: 'Settings', icon: faGear },
   ];
+
+  // Restrict navigation modules based on authenticated user role.
+  // Admin role gets full access to all 10 modules.
+  const navigation = allNavigation.filter((item) => isModuleAllowed(user?.role, item.id));
 
   return (
     <div className="flex h-screen bg-[#FFF9F6] overflow-hidden font-sans">
@@ -127,7 +132,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ activePage, setActivePag
             <span className="text-slate-400">System</span>
             <span>/</span>
             <span className="text-[#F67009] font-bold capitalize">
-              {navigation.find((n) => n.id === activePage)?.name || activePage}
+              {allNavigation.find((n) => n.id === activePage)?.name || activePage}
             </span>
           </div>
 

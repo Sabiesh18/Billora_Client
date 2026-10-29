@@ -6,6 +6,8 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  isManager: boolean;
+  isCashier: boolean;
   loading: boolean;
   isPostLoginLoading: boolean;
   dismissPostLoginLoader: () => void;
@@ -74,8 +76,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const userRole = (user?.role || '').toUpperCase().trim();
   const isAuthenticated = !!user;
-  const isAdmin = user?.role === 'ADMIN';
+  const isAdmin = userRole === 'ADMIN';
+  const isManager = userRole === 'MANAGER';
+  const isCashier = userRole === 'CASHIER';
 
   return (
     <AuthContext.Provider
@@ -83,6 +88,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isAuthenticated,
         isAdmin,
+        isManager,
+        isCashier,
         loading,
         isPostLoginLoading,
         dismissPostLoginLoader,
